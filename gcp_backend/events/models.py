@@ -30,7 +30,7 @@ class Event(models.Model):
     # is_verified = models.BooleanField(default=False)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, blank=True, null=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-    type = models.ForeignKey('Type', on_delete=models.CASCADE, blank=True, null=True)
+    _type = models.ForeignKey('Type', on_delete=models.CASCADE, blank=True, null=True)
     tags = models.ManyToManyField('Tag', blank=True)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
