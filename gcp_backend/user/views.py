@@ -12,8 +12,8 @@ class UserCreation(APIView):
             if serializer.is_valid():
                 pat = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
                 s = r'(0|91)?[6-9][0-9]{9}'
-                if(request.data['role']=="student" and Organization.objects.get(id=request.data['organisation_id'])):
-                    if re.match(pat,request.data['email']) and True if request.data['ph_num'] == None else re.match(s, request.data['ph_num']):
+                if(request.data['role']=="student" and Organization.objects.get(id=request.data['organization'])):
+                    if re.match(pat,request.data['email']) and (True if request.data.get('ph_num', '') is '' else re.match(s, request.data['ph_num'])):
                             serializer.save()
                             return Response({"status": "success", "user_id": serializer.data['id']}, status=status.HTTP_200_OK)
                     else:
@@ -43,3 +43,19 @@ class UserCreation(APIView):
             serializer.save()
             return Response(user_id, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class OrganisationView(APIView):
+    queryset = Organization.objects.all()
+    def get(self, request):
+        a = list()
+        for i in Organization.objects.values_list('id').filter():
+            i = i[0]
+            a.append(i)
+        b = []
+        for i in a:
+            x = Organization.objects.values_list('name').filter(id = i)
+            x = x[0]
+            b.append({"name":x[0], "id":i})
+        
+
+        return Response(b, status=status.HTTP_200_OK)
