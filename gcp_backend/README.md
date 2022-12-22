@@ -336,7 +336,7 @@ Add following category according to your wish and in any order in existing URL a
 - '_type='<type id>' for filtering according to type of event. <br>
 
 Example: <br>
-`http://127.0.0.1:8000/events/org_id=1?tag=1&str_date=2022-12-01`
+`http://127.0.0.1:8000/events/org_id=1?tag=1&str_date=2022-12-01` <br>
 **Return Types:** <br>
 - **Status:** 200 <br> **Meaning:** Success <br> **Data:** Will return a list of dictionary <br>
   Example <br>
