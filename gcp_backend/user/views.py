@@ -12,13 +12,13 @@ import datetime
 from gcp_backend.settings import COOKIE_ENCRYPTION_SECRET
 from .utility import autherize
 
+pat = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+s = r'(0|91)?[6-9][0-9]{9}'
 class UserCreation(APIView):
     # queryset= User.objects.all()
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
-            pat = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-            s = r'(0|91)?[6-9][0-9]{9}'
             if(request.data['role']=="2" and Organization.objects.get(id=request.data['organization'])):
                 if re.match(pat,request.data['email']) and (True if request.data.get('ph_num', '') is '' else re.match(s, request.data['ph_num'])):
                     serializer.validated_data['password'] = hash_password(serializer.validated_data['password'])
@@ -78,7 +78,19 @@ class UserView(APIView):
         if not User_instance:
             return Response(
                 {"Message": "User with id does not exists"}, 
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        if(request.data.get('id', '') is not '' or request.data.get('created_at', '') is not '' or request.data.get('updated_at', '') is not '' or request.data.get('is_active', '') is not '' or request.data.get('role', '') is not ''):
+            return Response({"status":"error", "Message":"You cannot edit id, created by, updated by, is active and role through api call"}, status=status.HTTP_409_CONFLICT)
+        if(request.data.get('email', '') is not '' and not re.match(pat,request.data['email'])):
+            return Response(
+                {"Message": "Email is not valid"}, 
+                status=status.HTTP_406_NOT_ACCEPTABLE
+            )
+        if(request.data.get('ph_num', '') is not '' and not re.match(s, request.data['ph_num'])):
+            return Response(
+                {"Message": "Phone number is not valid"}, 
+                status=status.HTTP_405_METHOD_NOT_ALLOWED
             )
         serializer = UserSerializer(instance=User_instance, data = request.data, partial=True)
         if serializer.is_valid():

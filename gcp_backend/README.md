@@ -10,25 +10,32 @@ Api used for signing in. </br>
 `http://127.0.0.1:8000/user/signup` </br>
 **Method:** POST <br>
 **Data:** Json file in format <br/>
-`{
+```json
+{
   "name": "<name>", 
   "email": "<Valid email>",
   "password": "<password length should be less than 14>",
   "role": "student",
   "organization": "<organization id>"
 }
-` </br>
+```
+
+ </br>
 Here Email needs to be valid. <br>
 Password Length less than 14 <br>
 Organization id needs to be provided. <br>
 Example: <br>
-`{
+
+```json
+{
   "name": "J",
   "email": "A@a.com",
   "password": "a2162a545a",
   "role": "student",
   "organization": "1"
-}` <br>
+}
+``` 
+
 **Return Types** <br>
 - **Status:** 200 <br> **Data:** `{
   "status": "success",
@@ -65,10 +72,36 @@ Example: <br>
 - - -
 ## 3 PROFILE UPDATE API
 Used to update details of a account. Can be used with *User* with any *Role*. Pass user id in URL <br>
-`http://127.0.0.1:8000/user/user_id=<user_id>` <br>
+`http://127.0.0.1:8000/user/<user_id>` <br>
 **METHOD:** PUT <br>
-**DATA:** <br>
-You need to just provide details which are changed from [email, name, password, ]
+**DATA:** You need to just provide details which are changed from [email, name, password, Phone number,organization ] <br> **Pass only the fields which have changes.**<br>
+```json
+{
+  "name": "<>",
+  "ph_num": "<>",
+  "password" : "<>",
+  "email": "<>",
+  "organization": <int>
+}
+```
+Here Email needs to be valid. <br>
+Password Length less than 14 <br>
+Organization id needs to be provided. <br>
+Example: <br>
+```json
+{
+  "name": "W",
+  "ph_num": "9999999999",
+  "organization": 1
+}
+```
+**Return Types** <br>
+- **Status:** 401 <br> **Data:** `{"Message": "User with id does not exists"}` <br> **Meaning:** User with id does not exists.
+- **Status:** 409 <br> **Data:** `{"status":"error", "Message":You cannot edit id, created by, updated by, is active and role through api call}` <br> **Meaning:** You cannot edit id, created by, updated by, is active and role through api call. <br>
+- **Status:** 406 <br> **Data:** `{"status":"error", "Message":Email is not valid}` <br> **Meaning:** Email is not valid.
+- **Status:** 405 <br> **Data:** `{"status":"error", "Message":Phone number is not valid}` <br> **Meaning:** Phone number is not valid.
+- **Status:** 200 <br> **Data:** `{"status":"error", "user id":user id}`  <br> **Meaning:** Changes saved.
+- **Status:** 400 <br> **Data:** `{"status":"success", "Message":serializer.errors}` <br> **Meaning:** Error from server.
 - - -
 ## 4 ORGANIZATION API
 Use to get list of Registered *Organizations* and their *ID* number. <br>
@@ -85,7 +118,8 @@ Only user with *Role* as **club_admin** can create an event. </br>
 `http://127.0.0.1:8000/events/create/?org_id=<organization id>&user_id=<user id>` <br>
 **METHOD:** POST <br>
 **DATA:** <br>
-`{
+```json
+{
   "name":"<>",
   "description": "<>",
   "_type": <int>,
@@ -94,9 +128,11 @@ Only user with *Role* as **club_admin** can create an event. </br>
   "end_date": "YYYY-MM-DD",
   "social_links": "<>",
   "rsvp_link": "<>",
-    "organization": <int>,
+  "organization": <int>,
   "created_by": <int>
-}` <br>
+}
+``` 
+
 Here, 
 - **_type** needs to be provided with **_type id**
 - **tags** need to be provided in **List** format with **tags id**
@@ -105,6 +141,7 @@ Here,
 - **created_by** is to be provided with **user id**
 - Here social_links, rsvp_link are optional <br>
 Example: <br>
+```json
 {
   "name":"A",
   "description": "ZZX",
@@ -116,7 +153,9 @@ Example: <br>
   "rsvp_link": "adfads",
   "organization": 1,
   "created_by": 2
-} <br>
+} 
+```
+
 **Return Types** <br>
 - **Status:** 400 <br> **Data:** `{"status":"error",
                     "Message": "Organisation with id does not exists"}` <br> **Meaning:** Organisation with id does not exists.
@@ -133,7 +172,8 @@ Only user with *Role* as **club_admin** can edit an event. </br>
 `http://127.0.0.1:8000/events/create/?org_id=<organization id>&user_id=<user id>` <br>
 **METHOD:** PUT <br>
 **DATA:** <br>
-`{
+```json
+{
   "name":"<>",
   "description": "<>",
   "_type": <int>,
@@ -142,7 +182,9 @@ Only user with *Role* as **club_admin** can edit an event. </br>
   "end_date": "YYYY-MM-DD",
   "social_links": "<>",
   "rsvp_link": "<>"
-}` <br>
+}
+```
+
 Here, 
 - **Provide only parameter which is changed**
 - **_type** needs to be provided with **_type id**
@@ -198,7 +240,8 @@ Use to view all the subscription of a user. <br>
 **Return Types:** <br>
 - **Status:** 401 <br> **Data:** `{"status":"error", "Message":"User id not Provided"}` <br> **Meaning:** User id not Provided.
 - **Status:** 200 <br> **Meaning:** Success <br> **Data:** Will contain a "Number" to indicate number of Subscription and "List" which contain all subscription details. <br> Example: <br> 
-  ```json {
+  ```json 
+  {
     "Number": 1,
     "List": [
       {
@@ -216,7 +259,7 @@ Use to view all the subscription of a user. <br>
         ],
         "Type": "ML-AI"
       }
-    ]
+      ]
   } 
   ``` 
 - - -
@@ -229,28 +272,165 @@ Use to get all the tags.
   Example: <br>
   ```json
   [
-  {
-    "tag": "hackathon",
-    "id": 1
-  },
-  {
-    "tag": "Quizing",
-    "id": 2
-  }
+    {
+      "tag": "hackathon",
+      "id": 1
+    },
+    {
+      "tag": "Quizing",
+      "id": 2
+    }
   ]
   ```
 - - -
 ## 10 ALL EVENTS API
-Use to view all events of a Organisation.
+Use to view all events of a Organisation. <br>
+`http://127.0.0.1:8000/events/org_id=<organization id>` <br>
+**METHOD:** GET <br>
+**Return Types:** <br>
+- **Status:** 200 <br> **Meaning:** Success <br> **Data:** Will return a list of dictionary <br>
+  Example <br>
+  ```json
+    [
+    {
+      "id": 4,
+      "name": "A",
+      "description": "ABC",
+      "start_date": "2022-12-01T00:00:00Z",
+      "end_date": "2022-12-03T00:00:00Z",
+      "social_links": "adf",
+      "rsvp_link": "adfads",
+      "image": "",
+      "tags": [
+        "hackathon",
+        "Quizing"
+      ],
+      "Type": "ML-AI"
+    },
+    {
+      "id": 7,
+      "name": "A",
+      "description": "ZZe",
+      "start_date": "2022-12-01T00:00:00Z",
+      "end_date": "2022-12-03T00:00:00Z",
+      "social_links": "adf",
+      "rsvp_link": "adfads",
+      "image": "",
+      "tags": [
+        "hackathon",
+        "Quizing"
+      ],
+      "Type": "ML-AI"
+      }
+    ]
+  ```
+
 - - -
 ## 11 EVENTS FILTER API
-Use to filter events.
+Use to filter events. **This is a Dynamic filter 😊 search** <br>
+`http://127.0.0.1:8000/events/org_id=<organization id>?` <br>
+Add following category according to your wish and in any order in existing URL and separate multiple categories with '&' symbol <br>
+- 'str_date=YYYY-MM-DD' for filtering according to starting date.
+- 'end_date=YYYY-MM-DD' for filtering according to end date
+- 'tags=<tag id>' for filtering according to tag name
+- '_type='<type id>' for filtering according to type of event. <br>
+
+Example: <br>
+`http://127.0.0.1:8000/events/org_id=1?tag=1&str_date=2022-12-01` <br>
+**Return Types:** <br>
+- **Status:** 200 <br> **Meaning:** Success <br> **Data:** Will return a list of dictionary <br>
+  Example <br>
+  ```json
+    [
+    {
+      "id": 4,
+      "name": "A",
+      "description": "ABC",
+      "start_date": "2022-12-01T00:00:00Z",
+      "end_date": "2022-12-03T00:00:00Z",
+      "social_links": "adf",
+      "rsvp_link": "adfads",
+      "image": "",
+      "tags": [
+        "hackathon",
+        "Quizing"
+      ],
+      "Type": "ML-AI"
+    },
+    {
+      "id": 7,
+      "name": "A",
+      "description": "ZZe",
+      "start_date": "2022-12-01T00:00:00Z",
+      "end_date": "2022-12-03T00:00:00Z",
+      "social_links": "adf",
+      "rsvp_link": "adfads",
+      "image": "",
+      "tags": [
+        "hackathon",
+        "Quizing"
+      ],
+      "Type": "ML-AI"
+      }
+    ]
+  ```
+
 - - -
 ## 12 ADD TAG API
-Use to add an Tag.
+Use to add an Tag. <br>
+`http://127.0.0.1:8000/events/tags?user_id=<user id>` <br>
+**METHOD:** POST <br>
+**DATA:** <br>
+`{
+  "tag": "<Tag Name>"
+}` <br>
+**Return Types:** <br>
+- **Status:** 403 <br> **Data:** `{"status":"error", "Message":User doesn't exist}` <br> **Meaning:** User doesn't exist.
+- **Status:** 401 <br> **Data:** `{"status":"error", "Message":User is not club admin}` <br> **Meaning:** User is not club admin.
+- **Status:** 201 <br> **Data:** `{"status":"success","Message":"Tag Added Successfully."}` <br> **Meaning:** Success.
+- **Status:** 400 <br> **Data:** `{"status":"error", "Message":serializer.errors}` <br> **Meaning:** Error from server.
 - - -
 ## 13 ADD AN TYPE OF EVENT API
-Use to add an type of Event.
+Use to add an type of Event. <br>
+`http://127.0.0.1:8000/events/type?user_id=<user id>` <br>
+**METHOD:** POST <br>
+**DATA:** <br>
+`{
+  "type": "<Type Name>"
+}` <br>
+**Return Types:** <br>
+- **Status:** 403 <br> **Data:** `{"status":"error", "Message":User doesn't exist}` <br> **Meaning:** User doesn't exist.
+- **Status:** 401 <br> **Data:** `{"status":"error", "Message":User is not club admin}` <br> **Meaning:** User is not club admin.
+- **Status:** 201 <br> **Data:** `{"status":"success","Message":"Type Added Successfully."}` <br> **Meaning:** Success.
+- **Status:** 400 <br> **Data:** `{"status":"error", "Message":serializer.errors}` <br> **Meaning:** Error from server.
 - - -
 ## 14 FILTER TYPE API
-Use to get all the type of events.
+Use to get all the type of events. <br>
+`http://127.0.0.1:8000/events/type` <br>
+**METHOD:** GET <br>
+**Return Types:** <br>
+- **Status:** 200 <br> **Meaning:** Success <br> **Data:** Will return a list of dictionary with *name* as *Tag name* and *id* as *tag id* <br>
+  Example: <br>
+  ```json
+  [
+    {
+      "Type": "ML-AI",
+      "id": 1
+    }
+  ]
+  ```
+- - -
+## 15 GET USER INFO
+To get user's name, email, phone number and organization id. <br>
+`http://127.0.0.1:8000/user/info/user=<user id>` <br>
+**Return Types:** <br>
+- **Status:** 200 <br> **Meaning:** Success <br> **Data:** Will return a  dictionary 
+  Example: <br>
+  ```json
+  {
+    "name": "J",
+    "email": "J@a.com",
+    "ph_num": null,
+    "organization": 1
+  }
+  ```

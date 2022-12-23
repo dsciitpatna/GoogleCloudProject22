@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import Event, Subscription, Tag, Type
 from user.models import User
-from .serializer import EventSerializer, SubscriptionSerializer, TagSerializer
+from .serializer import EventSerializer, SubscriptionSerializer, TagSerializer, TypeSerializer
 import datetime, re
 from datetime import datetime, date
 #  Create your views here.
@@ -163,6 +163,29 @@ class TagView(APIView):
         
 
         return Response(b, status=status.HTTP_200_OK)
+    def post(self, request):
+        user_id = request.GET.get('user_id', '')
+        if user_id is '' or not User.objects.get(id = user_id):
+            return Response(
+                {"status":"error",
+                    "Message": "User doesn't exist"}, 
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        if User.objects.values_list('role').filter(id = user_id)[0][0] != "club_admin":
+            return Response(
+                {"status":"error",
+                    "Message": "User is not club admin"}, 
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        serializer = TagSerializer(data=request.data)
+        if serializer.is_valid():
+                serializer.save()
+                return Response({"status":"success","Message":"Tag Added Successfully."}, status=status.HTTP_201_CREATED)
+            
+        else:
+                return Response({"status":"error","Message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class Filter(APIView):
     def get(self, request, org_id):
@@ -212,3 +235,40 @@ class Filter(APIView):
             
 
         return Response(b, status=status.HTTP_200_OK)
+
+class TypeView(APIView):
+    def get(self, request):
+        a = list()
+        for i in Type.objects.values_list('id').filter():
+            i = i[0]
+            a.append(i)
+        b = []
+        for i in a:
+            x = Type.objects.values_list('type').filter(id = i)
+            x = x[0]
+            b.append({"Type":x[0], "id":i})
+        
+
+        return Response(b, status=status.HTTP_200_OK)
+    def post(self, request):
+        user_id = request.GET.get('user_id', '')
+        if user_id is '' or not User.objects.get(id = user_id):
+            return Response(
+                {"status":"error",
+                    "Message": "User doesn't exist"}, 
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        if User.objects.values_list('role').filter(id = user_id)[0][0] != "club_admin":
+            return Response(
+                {"status":"error",
+                    "Message": "User is not club admin"}, 
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        serializer = TypeSerializer(data=request.data)
+        if serializer.is_valid():
+                serializer.save()
+                return Response({"status":"success","Message":"Type Added Successfully."}, status=status.HTTP_201_CREATED)
+            
+        else:
+                return Response({"status":"error","Message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)

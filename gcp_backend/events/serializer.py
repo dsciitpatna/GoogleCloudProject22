@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Event, Subscription, Tag
+from .models import Event, Subscription, Tag, Type
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
@@ -13,4 +13,8 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
+        fields="__all__"
+class TypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Type
         fields="__all__"
