@@ -27,7 +27,7 @@ class UserCreation(APIView):
                 else:
                     return Response({"status": "error", "data": "Invalid email or Phone number"}, status=status.HTTP_406_NOT_ACCEPTABLE)
             else:
-                return Response({"status":"error", "Message":"Either Role is not Student or Organisation is not Registered"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+                return Response({"status":"error", "Message":"Either Role != Student or Organisation != Registered"}, status=status.HTTP_406_NOT_ACCEPTABLE)
         else:
             return Response({"status": "error", "data": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -80,16 +80,16 @@ class UserView(APIView):
                 {"Message": "User with id does not exists"}, 
                 status=status.HTTP_401_UNAUTHORIZED
             )
-        if(request.data.get('id', '') is not '' or request.data.get('created_at', '') is not '' or request.data.get('updated_at', '') is not '' or request.data.get('is_active', '') is not '' or request.data.get('role', '') is not ''):
+        if(request.data.get('id', '') != '' or request.data.get('created_at', '') != '' or request.data.get('updated_at', '') != '' or request.data.get('is_active', '') != '' or request.data.get('role', '') != ''):
             return Response({"status":"error", "Message":"You cannot edit id, created by, updated by, is active and role through api call"}, status=status.HTTP_409_CONFLICT)
-        if(request.data.get('email', '') is not '' and not re.match(pat,request.data['email'])):
+        if(request.data.get('email', '') != '' and not re.match(pat,request.data['email'])):
             return Response(
-                {"Message": "Email is not valid"}, 
+                {"Message": "Email != valid"}, 
                 status=status.HTTP_406_NOT_ACCEPTABLE
             )
-        if(request.data.get('ph_num', '') is not '' and not re.match(s, request.data['ph_num'])):
+        if(request.data.get('ph_num', '') != '' and not re.match(s, request.data['ph_num'])):
             return Response(
-                {"Message": "Phone number is not valid"}, 
+                {"Message": "Phone number != valid"}, 
                 status=status.HTTP_405_METHOD_NOT_ALLOWED
             )
         serializer = UserSerializer(instance=User_instance, data = request.data, partial=True)
