@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './index.css';
 import App from './App';
+import Calender from './pages/Calender';
 import Navbar from './components/Navbar'
 import reportWebVitals from './reportWebVitals';
 
@@ -12,10 +13,10 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<App />}>
+        <Route exact path="/" element={<App />}>
           <Route index element={<App />} />
         </Route>
-        <Route path="2" element={<Navbar />} />
+        <Route exact path="/calender" element={<Calender />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
