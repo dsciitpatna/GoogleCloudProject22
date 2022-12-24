@@ -1,11 +1,10 @@
 from django.urls import path
-from .views import UserCreation, OrganisationView, Userinfo
+from .views import UserCreation, OrganisationView, UserView
 
 urlpatterns = [
-    path('signin', UserCreation.as_view()),
-    path('login/', UserCreation.as_view()),
-    path('info/user=<int:user_id>', Userinfo.as_view()),
-    path('login/refresh/', UserCreation.as_view()),
-    path('<int:user_id>', UserCreation.as_view()),
+    path('signup', UserCreation.as_view()),
+    path('login', UserView.as_view()), # method post
+    path('logout', UserView.as_view()), # method delete
+    path('profile', UserView.as_view()), # method get and put for update
     path('org/', OrganisationView.as_view())
 ]
