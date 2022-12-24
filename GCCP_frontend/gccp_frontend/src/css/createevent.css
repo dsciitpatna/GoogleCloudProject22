@@ -1,0 +1,27 @@
+.form-q
+{
+  font-size: large;
+  margin-bottom: 2ch;
+  margin-top: 2ch;
+  width: fit-content;
+}
+
+.createevent {
+    font-family: 'Poppins', sans-serif;
+    width:calc(100% - 240px);
+    padding-left: calc(5% + 240px);
+    margin-bottom: 5%;
+  }
+
+  #datetimewrapper{
+    display: flex;
+  }
+#timepickerwrapper{
+  display: flex;
+}
+
+.datetime
+{
+  width: 35%;
+  margin-right: 5%;
+}
