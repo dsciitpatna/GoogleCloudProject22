@@ -15,7 +15,6 @@ from .utility import autherize
 pat = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 s = r'(0|91)?[6-9][0-9]{9}'
 class UserCreation(APIView):
-    # queryset= User.objects.all()
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
@@ -125,17 +124,16 @@ class UserView(APIView):
 
 
 class OrganisationView(APIView):
-    queryset = Organization.objects.all()
+    def __init__(self, **kwargs):
+        self.Organizations = Organization.objects.filter(is_active=True)
+        super().__init__(**kwargs)
+    
     def get(self, request):
-        a = list()
-        for i in Organization.objects.values_list('id').filter():
-            i = i[0]
-            a.append(i)
-        b = []
-        for i in a:
-            x = Organization.objects.values_list('name').filter(id = i)
-            x = x[0]
-            b.append({"name":x[0], "id":i})
-        
+        data = []   
+        for org in self.Organizations:
+            data.append({
+                "id": org.id,
+                "name": org.name,
+            })
 
-        return Response(b, status=status.HTTP_200_OK)
+        return Response(data, status=status.HTTP_200_OK)

@@ -151,18 +151,13 @@ class SubscriptionCreation(APIView):
         return Response({"Number":len(a), "List": b}, status=status.HTTP_200_OK)
 class TagView(APIView):
     def get(self, request):
-        a = list()
-        for i in Tag.objects.values_list('id').filter():
-            i = i[0]
-            a.append(i)
-        b = []
-        for i in a:
-            x = Tag.objects.values_list('tag').filter(id = i)
-            x = x[0]
-            b.append({"tag":x[0], "id":i})
+        alltags = Tag.objects.all()
+        data = []
+        for tag in alltags:
+            data += [{"tag":tag.tag, "id":tag.id}]
+        return Response(data, status=status.HTTP_200_OK)
         
 
-        return Response(b, status=status.HTTP_200_OK)
     def post(self, request):
         user_id = request.GET.get('user_id', '')
         if user_id is '' or not User.objects.get(id = user_id):
