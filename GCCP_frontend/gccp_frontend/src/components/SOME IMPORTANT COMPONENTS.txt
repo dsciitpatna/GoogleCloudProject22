@@ -1,0 +1,9 @@
+Use this for BUTTON:
+
+<Button type="submit" color="primary" variant="contained" sx={ { borderRadius: 50,textTransform: 'none', fontWeight:'bold' } }> <AddIcon/> Add</Button>
+import these :
+import { Button} from '@mui/material';
+import { createTheme } from '@mui/material/styles';
+import AddIcon from '@mui/icons-material/Add';
+
+
