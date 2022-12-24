@@ -4,10 +4,10 @@
 + All the data while calling the API are to be provided in Json format. Example will be provided.
 + All organization needs to registered by super admin before user from that organization create accounts.
 - - -
-## 1. SIGNIN API
+## 1. SIGNUP API
 Api used for signing in. </br>
 **Only user with *Role* as *Student* can SIGNIN through this way.** </br>
-`http://127.0.0.1:8000/user/signin` </br>
+`http://127.0.0.1:8000/user/signup` </br>
 **Method:** POST <br>
 **Data:** Json file in format <br/>
 ```json
