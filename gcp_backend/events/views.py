@@ -7,6 +7,9 @@ from user.models import User
 from .serializer import EventSerializer, SubscriptionSerializer, TagSerializer, TypeSerializer
 import datetime, re
 from datetime import datetime, date
+from user.utility import autherize
+import jwt
+from gcp_backend.settings import COOKIE_ENCRYPTION_SECRET
 #  Create your views here.
 regex = r"\d{4}-\d{1,2}-\d{1,2}"
 format = "%Y-%m-%d"
@@ -14,58 +17,53 @@ format = "%Y-%m-%d"
 def to_python(value: str) -> date:
     return datetime.strptime(value, format).date()
 class EventCreation(APIView):
-    queryset= Event.objects.all()
-    def post(self, request):
+    @autherize
+    def post(self, request, **kwargs):
 
         serializer = EventSerializer(data=request.data)
-        org_id = request.GET.get('org_id', '')
-        user_id = request.GET.get('user_id', '')
-        if org_id is '':
+        user = kwargs['user']
+        role = kwargs['role']
+        if not user:
+            return Response(
+                {"Message": "User with id does not exists"}, 
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+        if user.organization.id is '':
             return Response(
                 {"status":"error",
                     "Message": "Organisation with id does not exists"}, 
                 status=status.HTTP_400_BAD_REQUEST
             )
-        if user_id is '' or not User.objects.get(organization = org_id, id = user_id):
-            return Response(
-                {"status":"error",
-                    "Message": "User doesn't exist within organisation"}, 
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-        
-        if User.objects.values_list('role').filter(id = user_id)[0][0] != "club_admin":
+        if role != "1":
             return Response(
                 {"status":"error",
                     "Message": "User is not club admin"}, 
                 status=status.HTTP_401_UNAUTHORIZED
             )
+        request.data["created_by"] = user.id
+        request.data["organization"] = user.organization.id
         if serializer.is_valid():
                 serializer.save()
                 return Response({"status":"success","Message":"Event Added Successfully"}, status=status.HTTP_201_CREATED)
             
         else:
                 return Response({"status":"error","Message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-    def put(self, request):
+    @autherize
+    def put(self, request, **kwargs):
         event_id = request.GET.get('event_id','')
-        org_id = request.GET.get('org_id', '')
-        user_id = request.GET.get('user_id', '')
+        user = kwargs['user']
+        role = kwargs['role']
         if event_id is '':
             return Response(
                 {"status":"error",
                     "Message": "Event with id does not exists"}, 
                 status=status.HTTP_406_NOT_ACCEPTABLE
             )
-        if org_id is '':
+        if user.organization.id is '':
             return Response(
                 {"status":"error",
                     "Message": "Organisation with id does not exists"}, 
                 status=status.HTTP_404_NOT_FOUND
-            )
-        if user_id is '' or not User.objects.get(organization = org_id, id = user_id):
-            return Response(
-                {"status":"error",
-                    "Message": "User doesn't exist within organisation"}, 
-                status=status.HTTP_401_UNAUTHORIZED
             )
         
         Event_instance = Event.objects.get(id = event_id)
@@ -74,13 +72,13 @@ class EventCreation(APIView):
                 {"status":"error","Message": "Event with id does not exists"}, 
                 status=status.HTTP_406_NOT_ACCEPTABLE
             )
-        if User.objects.values_list('role').filter(id = user_id)[0][0]!="club_admin":
+        if role != "1":
             return Response(
                 {"status":"error",
                     "Message": "User is not club admin"}, 
                 status=status.HTTP_405_METHOD_NOT_ALLOWED
             )
-        if(request.data.get('organization', '') is not '' and request.data.get('created_by', '') is not ''):
+        if(request.data.get('organization', '') is not '' or request.data.get('created_by', '') is not ''):
                         return Response(
                 {"status":"error",
                     "Message": "Cannot edit Organisation name or created by"}, 
@@ -96,60 +94,34 @@ class EventCreation(APIView):
 
 
 class SubscriptionCreation(APIView):
-    queryset= Subscription.objects.all()
-    def post(self, request):
+    @autherize
+    def post(self, request, **kwargs):
+        user = kwargs['user']
+        request.data['user'] = user.id
         serializer = SubscriptionSerializer(data=request.data)
         
         if serializer.is_valid():
                 
-                if(Event.objects.get(id = request.data['event'], created_by=request.data['user'])):
+                if(Event.objects.get(id = request.data['event'], organization=user.organization.id)):
                     serializer.save()
                     return Response({"status":"success", "Message":"Subscription Added Successfully"}, status=status.HTTP_201_CREATED)
                 else :
                     return Response({"status":"error","Message": "Your Organisation doesn't have this event"}, status=status.HTTP_404_NOT_FOUND)
         else:
                     return Response({"status":"error","Message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-    def get(self, request):
-        user_id = request.GET.get('user_id', '')
-        if user_id is '':
-            return Response({"status":"error", "Message":"User id not Provided"}, status =status.HTTP_401_UNAUTHORIZED)
-        a = list()
-        for i in Subscription.objects.values_list('id').filter(user_id=user_id):
-            i = i[0]
-            a.append(i)
-        b = []
-        if(len(a)):
-            for i in a:
-                z = Subscription.objects.values_list('event_id').filter(id = i)
-                z = z[0][0]
-                x = Event.objects.values_list('id','name','description', 'start_date', 'end_date','social_links','rsvp_link','image').filter(id=z)
-                x = x[0]
-                c = []
-                y = Event.objects.values_list('tags').filter(id = i)
-                for j in y:
-                    for z in j:
-                        if(y!=None):
-                            m = Tag.objects.values_list('tag').filter(id = z)
-                            if(len(m)!=0):
-                                m = m[0][0]
-                                
-                            c.append(m)
-                d =Event.objects.values_list('_type').filter(id=i)
-                e = []
-                for j in d:
-                    for z in j:
-                        if(y!=None):
-                            m = Type.objects.values_list('type').filter(id = z)
-                            if(len(m)!=0):
-                                m = m[0][0]
-                                
-                            e.append(m)
-                b.append({"id":x[0], "name":x[1],'description':x[2], 'start_date':x[3],'end_date':x[4],'social_links':x[5],'rsvp_link':x[6],'image':x[7],'tags':c,'Type':e[0]})
+    @autherize
+    def get(self, request, **kwargs):
+                b = []
+                user = kwargs['user']
+                for i in Subscription.objects.all().filter(user=user.id):
+                    c= [x.tag for x in Tag.objects.all().filter(event = i.event.id)]
+                    b.append({"id":i.event.id, "nane":i.event.name, "description": i.event.description, "start_Date":i.event.start_date, "end_date": i.event.end_date, "social_links": i.event.social_links, "rsvp_link":i.event.rsvp_link, "type": i.event._type.type, "tag": c})
 
         
 
-        return Response({"Number":len(a), "List": b}, status=status.HTTP_200_OK)
+                return Response(b, status=status.HTTP_200_OK)
 class TagView(APIView):
+<<<<<<< HEAD
     def get(self, request):
         alltags = Tag.objects.all()
         data = []
@@ -168,6 +140,24 @@ class TagView(APIView):
             )
         
         if User.objects.values_list('role').filter(id = user_id)[0][0] != "club_admin":
+=======
+    @autherize
+
+    def get(self, request, **kwargs):
+        role = kwargs['role']
+        a = []
+        for i in Tag.objects.all():
+            a.append({"tag": i.tag, "id": i.id})
+        
+
+        return Response([a, role], status=status.HTTP_200_OK)
+    
+    @autherize
+    def post(self, request, **kwargs):
+        user = kwargs['user']
+        role = kwargs['role']        
+        if user.role != "1":
+>>>>>>> a1851bd47454c9cfb4b08887b2a3de084975ad49
             return Response(
                 {"status":"error",
                     "Message": "User is not club admin"}, 
@@ -175,6 +165,7 @@ class TagView(APIView):
             )
         serializer = TagSerializer(data=request.data)
         if serializer.is_valid():
+
                 serializer.save()
                 return Response({"status":"success","Message":"Tag Added Successfully."}, status=status.HTTP_201_CREATED)
             
@@ -183,9 +174,11 @@ class TagView(APIView):
 
 
 class Filter(APIView):
-    def get(self, request, org_id):
+    @autherize
+    def get(self, request, **kwargs):
         a =list()
-        q ={'organization': org_id}
+        user = kwargs['user']
+        q ={'organization': user.organization.id}
         sdate = request.GET.get('str_date','')
         if(sdate is not ''):
             q.update({'start_date__gte':to_python(sdate)})
@@ -198,63 +191,28 @@ class Filter(APIView):
         _type = request.GET.get('type','')
         if (_type is not ''):
             q.update({'_type':_type})
-        a =list()
-        for i in  Event.objects.values_list('id').filter(**q):
-            i = i[0]
-            a.append(i)
         b= []
-        for i in a:
-            x = Event.objects.values_list('id','name','description', 'start_date', 'end_date','social_links','rsvp_link','image').filter(id=i)
-            x = x[0]
-            c = []
-            y = Event.objects.values_list('tags').filter(id = i)
-            for j in y:
-                for z in j:
-                    if(y!=None):
-                        m = Tag.objects.values_list('tag').filter(id = z)
-                        if(len(m)!=0):
-                            m = m[0][0]
-                            
-                        c.append(m)
-            d =Event.objects.values_list('_type').filter(id=i)
-            e = []
-            for j in d:
-                for z in j:
-                    if(y!=None):
-                        m = Type.objects.values_list('type').filter(id = z)
-                        if(len(m)!=0):
-                            m = m[0][0]
-                            
-                        e.append(m)
-            b.append({"id":x[0], "name":x[1],'description':x[2], 'start_date':x[3],'end_date':x[4],'social_links':x[5],'rsvp_link':x[6],'image':x[7],'tags':c,'Type':e[0]})
+        for i in  Event.objects.all().filter(**q):
+            c = [x.tag for x in Tag.objects.all().filter(event = i.id)]
+            b.append({"id":i.id, "name":i.name,'description':i.description, 'start_date':i.start_date,'end_date':i.end_date,'social_links':i.social_links,'rsvp_link':i.rsvp_link,'tags':c,'Type':i._type.type})
             
 
         return Response(b, status=status.HTTP_200_OK)
 
 class TypeView(APIView):
-    def get(self, request):
-        a = list()
-        for i in Type.objects.values_list('id').filter():
-            i = i[0]
-            a.append(i)
-        b = []
-        for i in a:
-            x = Type.objects.values_list('type').filter(id = i)
-            x = x[0]
-            b.append({"Type":x[0], "id":i})
+    @autherize
+    def get(self, request, **kwargs):
+        a = []
+        for i in Type.objects.all():
+            a.append({"Type": i.type, "id": i.id})
         
 
-        return Response(b, status=status.HTTP_200_OK)
-    def post(self, request):
-        user_id = request.GET.get('user_id', '')
-        if user_id is '' or not User.objects.get(id = user_id):
-            return Response(
-                {"status":"error",
-                    "Message": "User doesn't exist"}, 
-                status=status.HTTP_403_FORBIDDEN
-            )
-        
-        if User.objects.values_list('role').filter(id = user_id)[0][0] != "club_admin":
+        return Response(a, status=status.HTTP_200_OK)
+    @autherize
+    def post(self, request, **kwargs):
+        user =kwargs['user']
+        role = kwargs['role']
+        if role != "1":
             return Response(
                 {"status":"error",
                     "Message": "User is not club admin"}, 

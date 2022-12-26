@@ -50,7 +50,7 @@ class UserView(APIView):
                 payload = {
                     "id" : user.userid,
                     "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
-                    "iat": datetime.datetime.utcnow()
+                    "iat": datetime.datetime.utcnow(),
                 }
 
                 token = jwt.encode(payload, COOKIE_ENCRYPTION_SECRET, algorithm = 'HS256')
@@ -64,7 +64,7 @@ class UserView(APIView):
                 return response 
             return Response(
                 {"Message": "Invalid Password"}, 
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_304_NOT_MODIFIED
             )
         except Exception as e:
             return Response(
@@ -76,6 +76,7 @@ class UserView(APIView):
     @Autherize()
     def put(self, request, **kwargs):
         User_instance = kwargs['user']
+    
         if not User_instance:
             return Response(
                 {"Message": "User with id does not exists"}, 
@@ -94,7 +95,10 @@ class UserView(APIView):
                 status=status.HTTP_405_METHOD_NOT_ALLOWED
             )
         serializer = UserSerializer(instance=User_instance, data = request.data, partial=True)
+        
         if serializer.is_valid():
+            if(request.data.get('password', '') is not ''):
+                serializer.validated_data['password'] = hash_password(serializer.validated_data['password'])
             serializer.save()
             return Response( status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -125,7 +129,7 @@ class UserView(APIView):
         response.delete_cookie('jwt')
         return response
 
-
+#This will not require authorisation because it will be called before sign in
 class OrganisationView(APIView):
     def __init__(self, **kwargs):
         self.Organizations = Organization.objects.filter(is_active=True)
