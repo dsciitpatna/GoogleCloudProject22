@@ -8,8 +8,8 @@
 
 .createevent {
     font-family: 'Poppins', sans-serif;
-    width:calc(100% - 240px);
-    padding-left: calc(5% + 240px);
+    width:95%;
+    padding-left: calc(245px + 5%);
     margin-bottom: 5%;
   }
 
@@ -24,4 +24,12 @@
 {
   width: 35%;
   margin-right: 5%;
+}
+@media only screen and (max-width: 599px) {
+  .createevent {
+    font-family: 'Poppins', sans-serif;
+    width:90% ;
+    padding-left: 5%;
+    margin-bottom: 5%;
+  }
 }

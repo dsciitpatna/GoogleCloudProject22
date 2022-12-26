@@ -3,10 +3,10 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './index.css';
 import App from './App';
-import Navbar from './components/Navbar'
 import reportWebVitals from './reportWebVitals';
 import CreateEvent from './pages/CreateEvent';
-
+import AddMember from './pages/AddMember';
+import ViewMembers from './pages/ViewMembers';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
@@ -17,6 +17,8 @@ root.render(
           <Route index element={<App />} />
         </Route>
         <Route path="/CreateEvent" element={<CreateEvent/>} />
+        <Route path="/AddMember" element={<AddMember/>} />
+        <Route path="/ViewMembers" element={<ViewMembers/>} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
