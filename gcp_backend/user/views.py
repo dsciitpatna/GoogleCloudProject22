@@ -10,7 +10,7 @@ from gcp_backend.utility import hash_password, check_password
 import jwt
 import datetime
 from gcp_backend.settings import COOKIE_ENCRYPTION_SECRET
-from .utility import Autherize
+from .utility import autherize
 
 pat = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 s = r'(0|91)?[6-9][0-9]{9}'
@@ -19,7 +19,7 @@ class UserCreation(APIView):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             if(request.data['role']=="2" and Organization.objects.get(id=request.data['organization'])):
-                if re.match(pat,request.data['email']) and (True if request.data.get('ph_num', '') == '' else re.match(s, request.data['ph_num'])):
+                if re.match(pat,request.data['email']) and (True if request.data.get('phone_number', '') == '' else re.match(s, request.data['ph_num'])):
                     serializer.validated_data['password'] = hash_password(serializer.validated_data['password'])
                     serializer.save()
                     return Response({"status": "success", "user_id": serializer.data['id']}, status=status.HTTP_200_OK)
@@ -71,7 +71,7 @@ class UserView(APIView):
             ) 
 
     # update Profile API
-    @Autherize()
+    @autherize()
     def put(self, request, **kwargs):
         User_instance = kwargs['user']
     
@@ -102,7 +102,7 @@ class UserView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # Get Profile API
-    @Autherize()
+    @autherize()
     def get(self, request, **kwargs):
         print("flag1")
         user = kwargs['user']
@@ -117,7 +117,7 @@ class UserView(APIView):
         }
         return Response(data, status=status.HTTP_200_OK)
     # Logout API
-    @Autherize()
+    @autherize()
     def delete(self, request, **kwargs):
         user = kwargs['user']
         user.is_active = False
@@ -153,7 +153,7 @@ class OrganisationView(APIView):
 # -- O-auth
 
 class ClubAdminView(APIView):
-    @Autherize("0")
+    @autherize("0")
     def get(self, request, **kwargs):
         user = kwargs['user']
         club_admins = User.objects.filter(role="1", organization = user.organization)
@@ -170,7 +170,7 @@ class ClubAdminView(APIView):
         response.data = data
         return response
         
-    @Autherize("0")
+    @autherize("0")
     def post(self, request, **kwargs):
         user = kwargs['user']
         serializer = UserSerializer(data = request.data)
@@ -180,7 +180,7 @@ class ClubAdminView(APIView):
             return Response( status=status.HTTP_200_OK)
         return Response({"message" : "User Created"},serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @Autherize("0")
+    @autherize("0")
     def put(self, request, **kwargs):
         user = kwargs['user']
         _userid = request.data['userid']

@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Autherize decorator class
-class Autherize:
+class autherize:
     def __init__(self, usertype="2"):
         self.type = usertype
 
@@ -15,18 +15,18 @@ class Autherize:
             try:
                 cookie = args[1].COOKIES['jwt']
             except :
-                return Response({"message": "Cookie not found"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"message": "Cookie not found"}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
 
             try:
                 payload = jwt.decode(cookie, COOKIE_ENCRYPTION_SECRET, algorithms=['HS256'])
             except jwt.ExpiredSignatureError:
-                return Response( { 'message' : 'Cookie expired' }, status=status.HTTP_400_BAD_REQUEST)
+                return Response( { 'message' : 'Cookie expired' }, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
                 
             user = User.objects.get(userid=payload['id'])
             if not user:
                 return Response(
                     {"Message": "User with id does not exists"}, 
-                    status=status.HTTP_400_BAD_REQUEST
+                    status=status.HTTP_204_NO_CONTENT
                 )
             if self.type == "0" and user.role != "0":
                 return Response(
@@ -35,7 +35,7 @@ class Autherize:
                 )
             if self.type == "1" and user.role != "1":
                 return Response(
-                    {"Message": "Premission denied"}, 
+                    {"Message": "User with id doesn't exist"}, 
                     status=status.HTTP_403_FORBIDDEN
                 )
             kwargs['user'] = user

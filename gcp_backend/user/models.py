@@ -23,7 +23,7 @@ class User(models.Model):
     name = models.CharField(max_length=50)
     email = models.CharField(max_length=100, unique=True)
     # org_mail = models.CharField(max_length=100, unique=True)
-    ph_num = models.CharField( max_length=13,blank=True, null=True)
+    phone_number = models.CharField( max_length=13,blank=True, null=True)
     password = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
