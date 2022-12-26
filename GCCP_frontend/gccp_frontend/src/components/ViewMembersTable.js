@@ -7,8 +7,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Avatar from '@mui/material/Avatar';
-import Stack from '@mui/material/Stack';
-import { deepOrange, deepPurple } from '@mui/material/colors';
+import { deepPurple } from '@mui/material/colors';
 
 function createData(sln, photo, name, email, mobile, post) {
   return { sln, photo, name, email, mobile, post };
@@ -29,8 +28,8 @@ export default function BasicTable() {
             <TableCell align="center">Sl No.</TableCell>
             <TableCell align="left">Photo&nbsp;</TableCell>
             <TableCell align="center">Name&nbsp;</TableCell>
-            <TableCell align="center">Mobile&nbsp;</TableCell>
             <TableCell align="center">Email&nbsp;</TableCell>
+            <TableCell align="center">Mobile&nbsp;</TableCell>
             <TableCell align="center">Position&nbsp;</TableCell>
           </TableRow>
         </TableHead>
