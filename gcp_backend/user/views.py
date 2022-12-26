@@ -19,7 +19,7 @@ class UserCreation(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
-            if(request.data['role']=="2" and Organization.objects.get(id=request.data['organization'])):
+            if(request.data['role']==2 and Organization.objects.get(id=request.data['organization'])):
                 if re.match(pat,request.data['email']) and (True if request.data.get('ph_num', '') is '' else re.match(s, request.data['ph_num'])):
                     serializer.validated_data['password'] = hash_password(serializer.validated_data['password'])
                     serializer.save()
@@ -49,7 +49,7 @@ class UserView(APIView):
                 payload = {
                     "id" : user.userid,
                     "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
-                    "iat": datetime.datetime.utcnow()
+                    "iat": datetime.datetime.utcnow(),
                 }
 
                 token = jwt.encode(payload, COOKIE_ENCRYPTION_SECRET, algorithm = 'HS256')
@@ -63,7 +63,7 @@ class UserView(APIView):
                 return response 
             return Response(
                 {"Message": "Invalid Password"}, 
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_304_NOT_MODIFIED
             )
         except Exception as e:
             return Response(
@@ -75,6 +75,7 @@ class UserView(APIView):
     @autherize
     def put(self, request, **kwargs):
         User_instance = kwargs['user']
+    
         if not User_instance:
             return Response(
                 {"Message": "User with id does not exists"}, 
@@ -93,7 +94,10 @@ class UserView(APIView):
                 status=status.HTTP_405_METHOD_NOT_ALLOWED
             )
         serializer = UserSerializer(instance=User_instance, data = request.data, partial=True)
+        
         if serializer.is_valid():
+            if(request.data.get('password', '') is not ''):
+                serializer.validated_data['password'] = hash_password(serializer.validated_data['password'])
             serializer.save()
             return Response( status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -123,19 +127,17 @@ class UserView(APIView):
         response.delete_cookie('jwt')
         return response
 
-
+#This will not require authorisation because it will be called before sign in
 class OrganisationView(APIView):
     queryset = Organization.objects.all()
     def get(self, request):
-        a = list()
-        for i in Organization.objects.values_list('id').filter():
-            i = i[0]
-            a.append(i)
-        b = []
-        for i in a:
-            x = Organization.objects.values_list('name').filter(id = i)
-            x = x[0]
-            b.append({"name":x[0], "id":i})
+        a =[]
+        for i in Organization.objects.all():
+            a.append({
+                "name" : i.name,
+                "id" : i.id
+            })
+
         
 
-        return Response(b, status=status.HTTP_200_OK)
+        return Response(a, status=status.HTTP_200_OK)
