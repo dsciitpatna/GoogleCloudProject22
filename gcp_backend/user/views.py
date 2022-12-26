@@ -10,7 +10,7 @@ from gcp_backend.utility import hash_password, check_password
 import jwt
 import datetime
 from gcp_backend.settings import COOKIE_ENCRYPTION_SECRET
-from .utility import autherize
+from .utility import Autherize
 
 pat = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 s = r'(0|91)?[6-9][0-9]{9}'
@@ -19,7 +19,7 @@ class UserCreation(APIView):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             if(request.data['role']=="2" and Organization.objects.get(id=request.data['organization'])):
-                if re.match(pat,request.data['email']) and (True if request.data.get('ph_num', '') is '' else re.match(s, request.data['ph_num'])):
+                if re.match(pat,request.data['email']) and (True if request.data.get('ph_num', '') == '' else re.match(s, request.data['ph_num'])):
                     serializer.validated_data['password'] = hash_password(serializer.validated_data['password'])
                     serializer.save()
                     return Response({"status": "success", "user_id": serializer.data['id']}, status=status.HTTP_200_OK)
@@ -71,7 +71,7 @@ class UserView(APIView):
             ) 
 
     # update Profile API
-    @autherize
+    @Autherize()
     def put(self, request, **kwargs):
         User_instance = kwargs['user']
         if not User_instance:
@@ -98,8 +98,9 @@ class UserView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # Get Profile API
-    @autherize
+    @Autherize()
     def get(self, request, **kwargs):
+        print("flag1")
         user = kwargs['user']
         data = {
             "user_id": user.id,
@@ -112,7 +113,7 @@ class UserView(APIView):
         }
         return Response(data, status=status.HTTP_200_OK)
     # Logout API
-    @autherize
+    @Autherize()
     def delete(self, request, **kwargs):
         user = kwargs['user']
         user.is_active = False
@@ -137,3 +138,71 @@ class OrganisationView(APIView):
             })
 
         return Response(data, status=status.HTTP_200_OK)
+
+
+# Addition of Organization --> Handeled by Admin
+# Addition of club admin -< Handeled by Organization Admin
+# -- needed api > get all club admin, create club admin, lock club admin, unlock club admin
+# -- Extend view, update, login, logout, get profile for club admin & organization admin, also send user type in response
+# -- email validation for normal user
+# -- forget user
+# -- O-auth
+
+class ClubAdminView(APIView):
+    @Autherize("0")
+    def get(self, request, **kwargs):
+        user = kwargs['user']
+        club_admins = User.objects.filter(role="1", organization = user.organization)
+        data = []
+        for ca in club_admins:
+            data.append({
+                "userid" : ca.userid,  
+                "name" : ca.name,
+                "email" : ca.email,
+                "ph_num" : ca.ph_num,
+                "is_locked" : ca.is_locked
+            })
+        response = Response()
+        response.data = data
+        return response
+        
+    @Autherize("0")
+    def post(self, request, **kwargs):
+        user = kwargs['user']
+        serializer = UserSerializer(data = request.data)
+        if serializer.is_valid():
+            serializer.validated_data['password'] = hash_password(serializer.validated_data['password'])
+            serializer.save(role="1", organization = user.organization)
+            return Response( status=status.HTTP_200_OK)
+        return Response({"message" : "User Created"},serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @Autherize("0")
+    def put(self, request, **kwargs):
+        user = kwargs['user']
+        _userid = request.data['userid']
+        _islocked = request.data['islocked']
+
+        # input check of __islocked 
+        if _islocked not in [True, False]:
+            return Response(
+                {"Message": "islocked != valid"}, 
+                status=status.HTTP_406_NOT_ACCEPTABLE
+            )
+
+        # check the club admin exists or not
+        try:
+            club_admin = User.objects.get(userid = _userid, organization = user.organization, role = "1")
+        except User.DoesNotExist:
+            return Response(
+                {"Message": "Club Admin with id does not exists"}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # update the club admin
+        club_admin.is_locked = _islocked 
+        print(club_admin.is_locked)
+        club_admin.save()
+
+        return Response( {"message" : "Updated User"}, status=status.HTTP_200_OK)
+
+
