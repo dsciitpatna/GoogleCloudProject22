@@ -7,7 +7,7 @@ from user.models import User
 from .serializer import EventSerializer, SubscriptionSerializer, TagSerializer, TypeSerializer
 import datetime, re
 from datetime import datetime, date
-from user.utility import autherize
+from user.utility import Autherize
 import jwt
 from gcp_backend.settings import COOKIE_ENCRYPTION_SECRET
 #  Create your views here.
@@ -17,7 +17,7 @@ format = "%Y-%m-%d"
 def to_python(value: str) -> date:
     return datetime.strptime(value, format).date()
 class EventCreation(APIView):
-    @autherize
+    @Autherize()
     def post(self, request, **kwargs):
 
         serializer = EventSerializer(data=request.data)
@@ -48,7 +48,7 @@ class EventCreation(APIView):
             
         else:
                 return Response({"status":"error","Message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-    @autherize
+    @Autherize()
     def put(self, request, **kwargs):
         event_id = request.GET.get('event_id','')
         user = kwargs['user']
@@ -94,7 +94,7 @@ class EventCreation(APIView):
 
 
 class SubscriptionCreation(APIView):
-    @autherize
+    @Autherize()
     def post(self, request, **kwargs):
         user = kwargs['user']
         request.data['user'] = user.id
@@ -109,7 +109,7 @@ class SubscriptionCreation(APIView):
                     return Response({"status":"error","Message": "Your Organisation doesn't have this event"}, status=status.HTTP_404_NOT_FOUND)
         else:
                     return Response({"status":"error","Message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-    @autherize
+    @Autherize()
     def get(self, request, **kwargs):
                 b = []
                 user = kwargs['user']
@@ -121,28 +121,7 @@ class SubscriptionCreation(APIView):
 
                 return Response(b, status=status.HTTP_200_OK)
 class TagView(APIView):
-<<<<<<< HEAD
-    def get(self, request):
-        alltags = Tag.objects.all()
-        data = []
-        for tag in alltags:
-            data += [{"tag":tag.tag, "id":tag.id}]
-        return Response(data, status=status.HTTP_200_OK)
-        
-
-    def post(self, request):
-        user_id = request.GET.get('user_id', '')
-        if user_id is '' or not User.objects.get(id = user_id):
-            return Response(
-                {"status":"error",
-                    "Message": "User doesn't exist"}, 
-                status=status.HTTP_403_FORBIDDEN
-            )
-        
-        if User.objects.values_list('role').filter(id = user_id)[0][0] != "club_admin":
-=======
-    @autherize
-
+    @Autherize()
     def get(self, request, **kwargs):
         role = kwargs['role']
         a = []
@@ -152,12 +131,11 @@ class TagView(APIView):
 
         return Response([a, role], status=status.HTTP_200_OK)
     
-    @autherize
+    @Autherize()
     def post(self, request, **kwargs):
         user = kwargs['user']
         role = kwargs['role']        
         if user.role != "1":
->>>>>>> a1851bd47454c9cfb4b08887b2a3de084975ad49
             return Response(
                 {"status":"error",
                     "Message": "User is not club admin"}, 
@@ -174,7 +152,7 @@ class TagView(APIView):
 
 
 class Filter(APIView):
-    @autherize
+    @Autherize()
     def get(self, request, **kwargs):
         a =list()
         user = kwargs['user']
@@ -200,7 +178,7 @@ class Filter(APIView):
         return Response(b, status=status.HTTP_200_OK)
 
 class TypeView(APIView):
-    @autherize
+    @Autherize()
     def get(self, request, **kwargs):
         a = []
         for i in Type.objects.all():
@@ -208,7 +186,7 @@ class TypeView(APIView):
         
 
         return Response(a, status=status.HTTP_200_OK)
-    @autherize
+    @Autherize()
     def post(self, request, **kwargs):
         user =kwargs['user']
         role = kwargs['role']
