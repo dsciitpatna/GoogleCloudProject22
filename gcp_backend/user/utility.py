@@ -4,7 +4,9 @@ from gcp_backend.settings import COOKIE_ENCRYPTION_SECRET
 import jwt
 from rest_framework.response import Response
 from rest_framework import status
-
+from django.core.mail import send_mail
+import datetime  
+from gcp_backend.settings import EMAIL_HOST_USER
 # Autherize decorator class
 class Autherize:
     def __init__(self, usertype="2"):
@@ -40,5 +42,60 @@ class Autherize:
                 )
             kwargs['user'] = user
             return func(*args, **kwargs)
-
         return wrapper
+
+class EmailSending:
+    def __init__(self, email):
+        self.address = email
+        self.subject = None
+        self.body = None
+
+    def varification_mail(self):
+        user = User.objects.get(email = self.address)
+        payload = {
+            'userid' : user.userid,
+            "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
+            "iat": datetime.datetime.utcnow()
+        }
+
+        token = jwt.encode(payload, COOKIE_ENCRYPTION_SECRET, algorithm='HS256')
+        link = "http://localhost:8000/user/verify/"+token
+
+        self.subject = "No replay"
+        self.body = f'''
+        Hi {user.name},\n
+            Please click on the link below to verify your email address:
+             \n{link}
+            \n\nThanks,
+            \nTeam Club Management System
+        '''
+        res = send_mail(self.subject, self.body, EMAIL_HOST_USER, self.address)
+        return res
+
+    def reset_password(self):
+        user = User.objects.get(email = self.address)
+        payload = {
+            'userid' : user.userid,
+            "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
+            "iat": datetime.datetime.utcnow()
+        }
+
+        token = jwt.encode(payload, COOKIE_ENCRYPTION_SECRET, algorithm='HS256')
+        link = "http://localhost:8000/user/reset_password/"+token
+
+        self.subject = "No replay"
+        self.body = f'''
+        Hi {user.name},\n
+            Please click on the link below to reset your password:
+             \n{link}
+            \n\nThanks,
+            \nTeam Club Management System
+        '''
+        res = send_mail(self.subject, self.body, EMAIL_HOST_USER, self.address)
+        return res
+
+    def confirmation(self, name):
+        self.subject = "!Important"
+        self.body = f"Hi {name}, Your password has been changed, if not initiated by you please take action.\n\n Thank you"
+        res = send_mail(self.subject, self.body, EMAIL_HOST_USER, self.address)
+        return res

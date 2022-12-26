@@ -30,7 +30,7 @@ class User(models.Model):
     is_active = models.BooleanField(default=False)
     is_locked = models.BooleanField(default=False)
     role = models.CharField(max_length=50, choices=Role.choices, default=Role.STUDENT)
-    # is_verified = models.BooleanField(default=False)
+    is_verified = models.BooleanField(default=False)
     organization = models.ForeignKey('Organization', on_delete=models.CASCADE)
     def __str__(self):
         return self.name

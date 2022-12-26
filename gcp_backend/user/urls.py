@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import UserCreation, OrganisationView, UserView, ClubAdminView
+from .views import UserCreation, OrganisationView, UserView, ClubAdminView, EmailVarification, ForgetPassword
 
 urlpatterns = [
     path('signup', UserCreation.as_view()),
@@ -8,4 +8,7 @@ urlpatterns = [
     path('profile', UserView.as_view()), # method get and put for update
     path('org', OrganisationView.as_view()),
     path('club-admin', ClubAdminView.as_view()), # method get, post, put
+    path('verify/<str:token>', EmailVarification.as_view(), name='verify'),
+    path('verifymail', EmailVarification.as_view(), name='verify'),
+    path('forgotpass', ForgetPassword.as_view()),
 ]
