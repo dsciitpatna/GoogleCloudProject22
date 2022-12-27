@@ -6,6 +6,7 @@ import App from './App';
 import Navbar from './components/Navbar'
 import reportWebVitals from './reportWebVitals';
 import CreateEvent from './pages/CreateEvent';
+import Members from './components/members';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -17,6 +18,9 @@ root.render(
           <Route index element={<App />} />
         </Route>
         <Route path="/CreateEvent" element={<CreateEvent/>} />
+        <Route path="/members" element={<Members/>} />
+        
+         
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
