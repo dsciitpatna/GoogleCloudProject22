@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Autherize decorator class
-class autherize:
+class Autherize:
     def __init__(self, usertype="2"):
         self.type = usertype
 

@@ -7,7 +7,7 @@ from user.models import User
 from .serializer import EventSerializer, SubscriptionSerializer, TagSerializer, TypeSerializer
 import datetime, re
 from datetime import datetime, date
-from user.utility import autherize
+from user.utility import Autherize
 import jwt
 from gcp_backend.settings import COOKIE_ENCRYPTION_SECRET
 #  Create your views here.
@@ -17,7 +17,7 @@ format = "%Y-%m-%d"
 def to_python(value: str) -> date:
     return datetime.strptime(value, format).date()
 class EventCreation(APIView):
-    @autherize("1")
+    @Autherize("1")
     def post(self, request, **kwargs):
 
         serializer = EventSerializer(data=request.data)
@@ -36,7 +36,7 @@ class EventCreation(APIView):
             
         else:
                 return Response({"status":"error","Message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-    @autherize("1")
+    @Autherize("1")
     def put(self, request, **kwargs):
         event_id = request.GET.get('event_id','')
         user = kwargs['user']
@@ -75,7 +75,7 @@ class EventCreation(APIView):
 
 
 class SubscriptionCreation(APIView):
-    @autherize
+    @Autherize
     def post(self, request, **kwargs):
         user = kwargs['user']
         request.data['user'] = user.id
@@ -90,7 +90,7 @@ class SubscriptionCreation(APIView):
                     return Response({"status":"error","Message": "Your Organisation doesn't have this event"}, status=status.HTTP_404_NOT_FOUND)
         else:
                     return Response({"status":"error","Message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-    @autherize
+    @Autherize
     def get(self, request, **kwargs):
                 b = []
                 user = kwargs['user']
@@ -103,7 +103,7 @@ class SubscriptionCreation(APIView):
                 return Response(b, status=status.HTTP_200_OK)
 class TagView(APIView):
 
-    @autherize
+    @Autherize
     def get(self, request, **kwargs):
         a = []
         for i in Tag.objects.all():
@@ -112,7 +112,7 @@ class TagView(APIView):
 
         return Response([a], status=status.HTTP_200_OK)
     
-    @autherize("1")
+    @Autherize("1")
     def post(self, request, **kwargs):
         user = kwargs['user']     
         serializer = TagSerializer(data=request.data)
@@ -126,7 +126,7 @@ class TagView(APIView):
 
 
 class Filter(APIView):
-    @autherize
+    @Autherize
     def get(self, request, **kwargs):
         a =list()
         user = kwargs['user']
@@ -152,7 +152,7 @@ class Filter(APIView):
         return Response(b, status=status.HTTP_200_OK)
 
 class TypeView(APIView):
-    @autherize
+    @Autherize
     def get(self, request, **kwargs):
         a = []
         for i in Type.objects.all():
@@ -160,7 +160,7 @@ class TypeView(APIView):
         
 
         return Response(a, status=status.HTTP_200_OK)
-    @autherize("1")
+    @Autherize("1")
     def post(self, request, **kwargs):
         user =kwargs['user']
         serializer = TypeSerializer(data=request.data)
