@@ -8,7 +8,6 @@ import CreateEvent from './pages/CreateEvent';
 import Members from './components/members';
 
 import AddMember from './pages/AddMember';
-import ViewMembers from './pages/ViewMembers';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
@@ -20,10 +19,7 @@ root.render(
         </Route>
         <Route path="/CreateEvent" element={<CreateEvent/>} />
         <Route path="/members" element={<Members/>} />
-        
-         
         <Route path="/AddMember" element={<AddMember/>} />
-        <Route path="/ViewMembers" element={<ViewMembers/>} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
