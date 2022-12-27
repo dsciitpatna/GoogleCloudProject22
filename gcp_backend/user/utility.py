@@ -17,6 +17,18 @@ class Autherize:
             try:
                 cookie = args[1].COOKIES['jwt']
             except :
+                # handling O-auth login
+                if args[1].user.is_authenticated:
+                    uid = User.objects.get(email=args[1].user.email).userid
+                    payload = {
+                        "id" : uid,
+                        "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
+                        "iat": datetime.datetime.utcnow(),
+                    }
+                    token = jwt.encode(payload, COOKIE_ENCRYPTION_SECRET, algorithm='HS256')
+                    response = Response({"message" : "Cookie set"}, status=status.HTTP_418_IM_A_TEAPOT)
+                    response.set_cookie('jwt', token)
+                    return response 
                 return Response({"message": "Cookie not found"}, status=status.HTTP_400_BAD_REQUEST)
 
             try:
