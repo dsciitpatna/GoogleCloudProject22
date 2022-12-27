@@ -10,7 +10,9 @@ from gcp_backend.utility import hash_password, check_password
 import jwt
 import datetime
 from gcp_backend.settings import COOKIE_ENCRYPTION_SECRET
-from .utility import Autherize
+from .utility import Autherize, EmailSending  
+
+
 
 pat = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
 s = r'(0|91)?[6-9][0-9]{9}'
@@ -144,14 +146,6 @@ class OrganisationView(APIView):
         return Response(data, status=status.HTTP_200_OK)
 
 
-# Addition of Organization --> Handeled by Admin
-# Addition of club admin -< Handeled by Organization Admin
-# -- needed api > get all club admin, create club admin, lock club admin, unlock club admin
-# -- Extend view, update, login, logout, get profile for club admin & organization admin, also send user type in response
-# -- email validation for normal user
-# -- forget user
-# -- O-auth
-
 class ClubAdminView(APIView):
     @Autherize("0")
     def get(self, request, **kwargs):
@@ -210,3 +204,82 @@ class ClubAdminView(APIView):
         return Response( {"message" : "Updated User"}, status=status.HTTP_200_OK)
 
 
+class EmailVarification(APIView):
+    def get(self, request,token):
+        if not token:
+            return Response({"message" : "Token is missing"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            payload = jwt.decode(token, COOKIE_ENCRYPTION_SECRET, algorithms=['HS256'])
+        except jwt.ExpiredSignatureError:
+            return Response({"message" : "Token is expired"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        user = User.objects.get(userid = payload['userid'])
+        user.is_verified = True
+        user.save()
+        
+        return Response({"message" : "Email Varification Done"}, status=status.HTTP_200_OK)
+
+    @Autherize()
+    def post(self, request,token,**kwargs): # sending varification mail
+        if not request.data['email']:
+            return Response({"message" : "Email is missing"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        mail_client = EmailSending(request.data['email'])
+        res = mail_client.varification_mail()
+            
+        return Response({"message" : "Email Varification Mail Sent", "response" : res }, status=status.HTTP_200_OK)
+
+
+class ForgetPassword(APIView):
+    def get(): # for clicking the sent link
+        pass
+
+    def post(self, request): # posting the email address // mail the link
+        if not request.data['email']:
+            return Response({"message" : "Email is missing"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        mail_client = EmailSending(request.data['email'])
+        res = mail_client.reset_password()
+        return Response({"message" : "Reset Link sent"}, status = status.HTTP_201_CREATED)
+        
+
+    def put(self, request): # chanfing the password
+        token = request.data['token']
+        password = request.data['password']
+
+        try:
+            payload = jwt.decode(token, COOKIE_ENCRYPTION_SECRET, 'HS256')
+        except jwt.ExpiredSignatureError:
+            return Response({"message" : "Cookie Expired"}, status = status.HTTP_408_REQUEST_TIMEOUT)
+
+        try:
+            user = User.objects.get(userid = payload['userid'])
+        except:
+            return Response({"message": "Invalid cookie"}, status = status.HTTP_404_NOT_FOUND)
+        
+        password = hash_password(password)
+        user.password = password
+        user.save()
+
+        mail_client = EmailSending(user.email)
+        res = mail_client.confirmation(user.name)
+        return Response({"message" : "Password updated"}, status = status.HTTP_200_OK)
+
+# class Oauth(APIView):
+#     def get(self, request):
+#         # Get {% provider_login_url 'google' %} and send in json response
+        
+# URL for google O-auth -> http://127.0.0.1:8000/accounts/google/login/
+
+class OauthHelper(APIView):
+    def get(self, request, org_id):
+        try:
+            payload = { "org_id" : org_id }
+        except:
+            return Response({"message" : "Organization id is missing"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        token = jwt.encode(payload, COOKIE_ENCRYPTION_SECRET, algorithm='HS256')
+        response = Response({"message" : "Token generated"}, status=status.HTTP_200_OK)
+        response.set_cookie(key='org_id', value=token, httponly=True )
+        return response
