@@ -1,4 +1,4 @@
-.form-q
+.form-q 
 {
   font-size: large;
   margin-bottom: 2ch;
@@ -9,8 +9,8 @@
 .createevent {
     font-family: 'Poppins', sans-serif;
     width:95%;
-    padding-left: calc(245px + 5%);
     margin-bottom: 5%;
+    font-weight: 600;
   }
 
   #datetimewrapper{

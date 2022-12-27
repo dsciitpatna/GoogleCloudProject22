@@ -1,21 +1,21 @@
-import { drawerClasses } from '@mui/material';
-import Navbar from '../components/Navbar'
 import '../css/createevent.css'
 import * as React from 'react';
-import { OutlinedInput, TextField } from '@mui/material';
-import FormControl from '@mui/material/FormControl';
+import { TextField } from '@mui/material';
 import ResponsiveTimePickers from '../components/TimePicker';
 import DatePickerValue from '../components/DatePicker';
 import TagSelect from '../components/TagSelect'
 import { Button} from '@mui/material';
-
-const drawerWidth = 240;
+import Sidebar from '../components/sidebar/index'
+import Header from '../components/header/index'
 
 function CreateEvent() {
   return (
-    <div>
-      <Navbar />
-      <div class="createevent">
+    <div className="sidebar-mini skin-black-light">
+      <Header />
+      <Sidebar/>
+      <div className="content-wrapper">
+        
+      <div class="createevent content">
 
         <div class="form-q">Event Name *</div>
         <TextField id="name-of-event"
@@ -64,11 +64,14 @@ function CreateEvent() {
           sx={ { borderRadius: 50,
           textTransform: 'none', 
           fontWeight:'bold', 
+          fontSize:"15px",
           marginTop:10 } }>
             Create Event
             </Button>
       </div>
     </div>
+    </div>
+    
   );
 }
 

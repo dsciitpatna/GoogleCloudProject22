@@ -1,25 +1,30 @@
 import * as React from 'react';
+import { useNavigate } from "react-router-dom";
 import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
+import {Button, Box} from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import MailIcon from '@mui/icons-material/Mail';
 import MenuIcon from '@mui/icons-material/Menu';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import AddIcon from '@mui/icons-material/Add';
+import PeopleIcon from '@mui/icons-material/People';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import LogoutIcon from '@mui/icons-material/Logout';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 
 const drawerWidth = 240;
 
 function ResponsiveDrawer(props) {
+  const navigate = useNavigate();
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
@@ -27,29 +32,37 @@ function ResponsiveDrawer(props) {
     setMobileOpen(!mobileOpen);
   };
 
+  const links = [{ name: 'Create Event', linkto: "/createevent", icon: <AddIcon/> },
+  { name: 'View Members', linkto: "/viewmembers", icon: <PeopleIcon/> },
+  { name: 'Add Member', linkto: "#", icon: <PersonAddIcon/> }]
+
   const drawer = (
     <div>
       <Toolbar />
+
+      &ensp;Welcome To Eventzilla
       <Divider />
       <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-          <ListItem key={text} disablePadding>
+        {links.map((index) => (
+          <ListItem key={index} disablePadding>
+            <Button href={index.linkto}>
             <ListItemButton>
               <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                {index.icon}
               </ListItemIcon>
-              <ListItemText primary={text} />
+              <ListItemText primary={index.name} />
             </ListItemButton>
+            </Button>
           </ListItem>
         ))}
       </List>
       <Divider />
       <List>
-        {['All mail', 'Trash', 'Spam'].map((text, index) => (
+        {['My Account', 'Sign Out'].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton>
               <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                {index % 2 === 0 ? <AccountCircleIcon/> : <LogoutIcon/>}
               </ListItemIcon>
               <ListItemText primary={text} />
             </ListItemButton>
@@ -82,7 +95,7 @@ function ResponsiveDrawer(props) {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            Responsive drawer
+            Eventzilla: Create Events on a Go!
           </Typography>
         </Toolbar>
       </AppBar>
@@ -123,7 +136,7 @@ function ResponsiveDrawer(props) {
         sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}
       >
         <Toolbar />
-        
+
       </Box>
     </Box>
   );
