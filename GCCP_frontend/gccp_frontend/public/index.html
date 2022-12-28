@@ -9,15 +9,34 @@
       name="description"
       content="Web site created using create-react-app"
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap" rel="stylesheet">
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+
+    <link rel="stylesheet" href="%PUBLIC_URL%/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="%PUBLIC_URL%/bower_components/font-awesome/css/font-awesome.min.css">
+   
+    <!-- Theme style -->
+    <link rel="stylesheet" href="%PUBLIC_URL%/dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="%PUBLIC_URL%/dist/css/skins/_all-skins.min.css">
+    <link rel="stylesheet" href="%PUBLIC_URL%/dist/css/myStyle.css">
+
+    <!-- Google Font -->
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+    <style>
+        .inline-block {
+            display: inline-block;
+        }
+
+        .mb-15 {
+            margin-bottom: 15px;
+        }
+    </style>
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -28,9 +47,10 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>React App</title>
+    
+    <title>Eventzilla</title>
   </head>
   <body>
-    <style> @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap'); </style>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <!--
@@ -43,5 +63,19 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+    <script src="%PUBLIC_URL%/bower_components/jquery/dist/jquery.min.js"></script>
+    <!-- jQuery UI 1.11.4 -->
+    <script src="%PUBLIC_URL%/bower_components/jquery-ui/jquery-ui.min.js"></script>
+    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+    
+    <!-- Bootstrap 3.3.7 -->
+    <script src="%PUBLIC_URL%/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+   
+    <!-- Slimscroll -->
+    <script src="%PUBLIC_URL%/bower_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+    
+    <!-- AdminLTE App -->
+    <script src="%PUBLIC_URL%/dist/js/adminlte.min.js"></script>
+    
   </body>
 </html>

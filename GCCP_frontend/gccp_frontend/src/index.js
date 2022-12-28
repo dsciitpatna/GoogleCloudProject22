@@ -4,9 +4,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './index.css';
 import App from './App';
 import Calender from './pages/Calender';
-import Navbar from './components/Navbar'
 import reportWebVitals from './reportWebVitals';
+import CreateEvent from './pages/CreateEvent';
+import Members from './components/members';
 
+import AddMember from './pages/AddMember';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
@@ -16,6 +18,9 @@ root.render(
         <Route exact path="/" element={<App />}>
           <Route index element={<App />} />
         </Route>
+        <Route path="/CreateEvent" element={<CreateEvent/>} />
+        <Route path="/members" element={<Members/>} />
+        <Route path="/AddMember" element={<AddMember/>} />
         <Route exact path="/calender" element={<Calender />} />
       </Routes>
     </BrowserRouter>

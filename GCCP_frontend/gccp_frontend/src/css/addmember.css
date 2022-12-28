@@ -1,0 +1,23 @@
+.form-q
+{
+  font-size: large;
+  margin-bottom: 2ch;
+  margin-top: 2ch;
+  width: fit-content;
+}
+
+.addmember {
+    font-family: 'Poppins', sans-serif;
+    width:95%;
+    margin-bottom: 5%;
+    font-weight: 600;
+  }
+
+  @media only screen and (max-width: 599px) {
+    .addmember {
+      font-family: 'Poppins', sans-serif;
+      width:90% ;
+      padding-left: 5%;
+      margin-bottom: 5%;
+    }
+  }
