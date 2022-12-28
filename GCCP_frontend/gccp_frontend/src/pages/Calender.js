@@ -138,4 +138,5 @@ function renderSidebarEvent(event) {
       <i>{event.title}</i>
     </li>
   );
-}
+};
+
