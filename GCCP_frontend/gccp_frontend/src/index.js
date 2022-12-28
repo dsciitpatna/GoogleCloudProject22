@@ -9,6 +9,7 @@ import CreateEvent from './pages/CreateEvent';
 import Members from './components/members';
 import Technical from './components/technical/index';
 import AddMember from './pages/AddMember';
+import SignupForm from './pages/Signup';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
@@ -23,6 +24,7 @@ root.render(
         <Route path="/AddMember" element={<AddMember/>} />
         <Route exact path="/calender" element={<Calender />} />
         <Route exact path="/technical" element={<Technical/>} />
+        <Route path="/Signup" element={<SignupForm/>} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
