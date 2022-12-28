@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './index.css';
 import App from './App';
+import Calender from './pages/Calender';
 import reportWebVitals from './reportWebVitals';
 import CreateEvent from './pages/CreateEvent';
 import Members from './components/members';
@@ -14,12 +15,13 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<App />}>
+        <Route exact path="/" element={<App />}>
           <Route index element={<App />} />
         </Route>
         <Route path="/CreateEvent" element={<CreateEvent/>} />
         <Route path="/members" element={<Members/>} />
         <Route path="/AddMember" element={<AddMember/>} />
+        <Route exact path="/calender" element={<Calender />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
