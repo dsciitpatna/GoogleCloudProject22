@@ -16,7 +16,7 @@ export default class DemoApp extends React.Component {
   render() {
     return (
       <div className="demo-app">
-        {this.renderSidebar()}
+        {/* {this.renderSidebar()} */}
         <div className="demo-app-main">
           <FullCalendar
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}

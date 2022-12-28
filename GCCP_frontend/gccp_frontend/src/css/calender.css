@@ -1,7 +1,7 @@
 
-html,
+/* html,
 body,
-body > div { /* the react root */
+body > div {
   margin: 0;
   padding: 0;
   height: 100%;
@@ -22,9 +22,9 @@ li {
   padding: 0;
 }
 
-b { /* used for event dates/times */
+b { 
   margin-right: 3px;
-}
+} */
 
 .demo-app {
   display: flex;
