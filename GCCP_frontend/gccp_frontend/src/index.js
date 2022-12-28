@@ -7,7 +7,7 @@ import Calender from './pages/Calender';
 import reportWebVitals from './reportWebVitals';
 import CreateEvent from './pages/CreateEvent';
 import Members from './components/members';
-
+import Technical from './components/technical/index';
 import AddMember from './pages/AddMember';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -22,6 +22,7 @@ root.render(
         <Route path="/members" element={<Members/>} />
         <Route path="/AddMember" element={<AddMember/>} />
         <Route exact path="/calender" element={<Calender />} />
+        <Route exact path="/technical" element={<Technical/>} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
