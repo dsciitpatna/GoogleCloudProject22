@@ -17,12 +17,16 @@ function AddMember() {
           <div class="form-q">Name *</div>
           <TextField id="name-of-member"
             placeholder="Member Name"
-            sx={{ width: "100%" }} />
+            sx={{ width: "100%" }} 
+            inputProps={{ style: { fontSize: 12 } }}
+            InputLabelProps={{ style: { fontSize: 12 } }} />
 
           <div class="form-q">Email *</div>
           <TextField id="email-of-member"
             placeholder="Enter the email"
-            sx={{ width: "100%" }} />
+            sx={{ width: "100%" }} 
+            inputProps={{ style: { fontSize: 12 } }}
+            InputLabelProps={{ style: { fontSize: 12 } }} />
 
           <div class="form-q">Positions held *</div>
 

@@ -4,7 +4,8 @@ import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
 import events from '../config/events'
-
+import Sidebar from '../components/sidebar/index'
+import Header from '../components/header/index'
 // Setup the localizer by providing the moment (or globalize, or Luxon) Object
 // to the correct localizer.
 const localizer = momentLocalizer(moment);
@@ -19,7 +20,12 @@ const localizer = momentLocalizer(moment);
 
 const Calender = () => {
   return (
-    <div>
+    <div className="sidebar-mini skin-black-light">
+      <Header />
+      <Sidebar/>
+      <div className="content-wrapper">
+        
+      <div class="content">
       <Calendar
         localizer={localizer}
         defaultDate={new Date()}
@@ -27,6 +33,8 @@ const Calender = () => {
         events={events}
         style={{ height: "100vh" }}
       />
+    </div>
+    </div>
     </div>
   );
 };
