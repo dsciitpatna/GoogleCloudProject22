@@ -57,9 +57,9 @@ export default function MultipleSelectChip() {
 
   return (
     <div>
-      <FormControl sx={{width:'100%',
+      <FormControl sx={{width:'100%', 
     paddingleft: 'calc(5% + 240px)'}}>
-        <InputLabel id="demo-multiple-chip-label">Chip</InputLabel>
+        <InputLabel id="demo-multiple-chip-label">Select</InputLabel>
         <Select
           labelId="demo-multiple-chip-label"
           id="demo-multiple-chip"
@@ -82,6 +82,7 @@ export default function MultipleSelectChip() {
               key={name}
               value={name}
               style={getStyles(name, personName, theme)}
+              sx={{fontSize:"12px"}}
             >
                 <Checkbox checked={personName.indexOf(name) > -1} />
               {name}

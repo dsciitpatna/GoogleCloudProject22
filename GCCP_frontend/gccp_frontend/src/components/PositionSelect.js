@@ -77,6 +77,7 @@ export default function MultipleSelectChip() {
               key={name}
               value={name}
               style={getStyles(name, personName, theme)}
+              sx={{fontSize:"12px"}}
             >
                 <Checkbox checked={personName.indexOf(name) > -1} />
               {name}
