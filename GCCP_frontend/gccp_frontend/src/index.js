@@ -18,9 +18,9 @@ root.render(
         <Route exact path="/" element={<App />}>
           <Route index element={<App />} />
         </Route>
-        <Route path="/CreateEvent" element={<CreateEvent/>} />
-        <Route path="/members" element={<Members/>} />
-        <Route path="/AddMember" element={<AddMember/>} />
+        <Route exact path="/CreateEvent" element={<CreateEvent />} />
+        <Route exact path="/members" element={<Members />} />
+        <Route exact path="/AddMember" element={<AddMember />} />
         <Route exact path="/calender" element={<Calender />} />
         <Route exact path="/technical" element={<Technical/>} />
       </Routes>
