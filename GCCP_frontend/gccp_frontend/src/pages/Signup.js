@@ -1,72 +1,131 @@
-import React, { useEffect, useState } from "react";
-import "../css/signupform.css";
+import * as React from 'react';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import CssBaseline from '@mui/material/CssBaseline';
+import TextField from '@mui/material/TextField';
+import GitHubIcon from '@mui/icons-material/GitHub';
+import GoogleIcon from '@mui/icons-material/Google';
+import Link from '@mui/material/Link';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-const SignupForm = () => {
+const theme = createTheme();
 
-  const [popupStyle, showPopup] = useState("hide");
-
-  const popup = () => {
-    showPopup("login-popup");
-    setTimeout(() => showPopup("hide"), 3000);
+export default function SignUp() {
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    console.log({
+      email: data.get('email'),
+      password: data.get('password'),
+    });
   };
-
-  const onSuccess = (e) => {
-    alert("User signed in");
-    console.log(e);
-  };
-
-  const onFailure = (e) => {
-    alert("User sign in Failed");
-    console.log(e);
-  };
-
 
   return (
-    <div className="screen">
-      <div className="cover1">
-        <div className="logo1"></div>
-        <div className="txt1">
-            <p>Create your account today!</p>
-        </div>
-        <div className="alternative">
-           <div className="github">Sign up with GitHub</div>
-           <div className="google">Sign up with Google
-            {/* <GoogleLogin
-              className="white"
-              clientId="79474543031-tmjo35916ufn421ej3u1i2ljao2apr4s.apps.googleusercontent.com"
-              buttonText=""
-              onSuccess={onSuccess}
-              onFailure={onFailure}
-              cookiePolicy={"single_host_origin"}
-              isSignedIn={false} // alternative is true, which keeps the user signed in
-              icon={false} // alt is true, and this puts the google logo on your button, but I don't like it
-              theme="dark" // alternative is light, which is white
-            /> */}
-          </div> 
-        </div>
-      </div>
+    <ThemeProvider theme={theme}>
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <Box
+          sx={{
+            marginTop: 8,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Sign up
+          </Typography>
+          <Box component="form" 
+          noValidate 
+          onSubmit={handleSubmit} 
+          sx={{ mt: 3,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center', }}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  autoComplete="given-name"
+                  name="Name"
+                  required
+                  fullWidth
+                  id="Name"
+                  label="First Name"
+                  autoFocus
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  fullWidth
+                  id="mobile"
+                  label="Mobile No."
+                  name="mobile"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="new-password"
+                />
+              </Grid>
+              
+            </Grid>
+            <h6>OR</h6>
+            <Grid container sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center', }}>
+              <Grid xs={8} sx={{m:1}}>
+              <Button variant="outlined" color='secondary'><GitHubIcon/> &ensp; GitHub</Button>
+              </Grid>
+              <Grid xs={8} sx={{m:1}}>
+              <Button variant="outlined" color='secondary'><GoogleIcon/> &ensp; Google</Button>
+              </Grid>
+            </Grid>
 
-      <div className="cover2">
-        <div className="logo2"></div>
-
-        <div className="signuptext">Sign up</div>
-        <input type="text" placeholder="name" />
-        <input type="text" placeholder="email" />
-        <input type="password" placeholder="password" />
-
-        <div className="signup-btn" onClick={popup}>
-          Sign up
-        </div>
-
-        <div className="login-container">
-          <div className="login-child txt">Already a member?</div>
-          <div className="login-child btn">
-            Login
-            </div>
-        </div>
-      </div>
-    </div>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color='secondary'
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Sign Up
+            </Button>
+            <Grid container justifyContent="flex-end">
+              <Grid item>
+                <Link href="/" variant="body2">
+                  Already have an account? Sign in
+                </Link>
+              </Grid>
+            </Grid>
+          </Box>
+        </Box>
+      </Container>
+    </ThemeProvider>
   );
-};
-
-export default SignupForm;
+}
