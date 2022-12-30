@@ -1,13 +1,15 @@
 import React from 'react'
 
-const ModelComp = () => {
+const ModelComp = (props) => {
     return (
         <div className="modal-dialog modal-lg">
             <div className="modal-content my_modal_content">
                 <div className="modal-header pull-right">
                     <button type="button" className="btn "><i className="fa fa-pencil" />    </button>
                     <button type="button" className="btn "><i className="fa fa-trash" /> </button>
-                    <button type="button" className="btn " data-dismiss="modal" aria-label="Close">
+                    <button type="button" className="btn " data-dismiss="modal" aria-label="Close" onClick={()=>{
+                        props.closeHandler && props.closeHandler(false)
+                    }}>
                         <i className="fa fa-times" /> </button>
                     {/* <h4 class="modal-title">Add Checklist</h4> */}
                 </div>
