@@ -17,28 +17,16 @@ format = "%Y-%m-%d"
 def to_python(value: str) -> date:
     return datetime.strptime(value, format).date()
 class EventCreation(APIView):
-    @Autherize()
+    @Autherize("1")
     def post(self, request, **kwargs):
 
         serializer = EventSerializer(data=request.data)
         user = kwargs['user']
-        role = kwargs['role']
-        if not user:
-            return Response(
-                {"Message": "User with id does not exists"}, 
-                status=status.HTTP_401_UNAUTHORIZED
-            )
         if user.organization.id is '':
             return Response(
                 {"status":"error",
                     "Message": "Organisation with id does not exists"}, 
                 status=status.HTTP_400_BAD_REQUEST
-            )
-        if role != "1":
-            return Response(
-                {"status":"error",
-                    "Message": "User is not club admin"}, 
-                status=status.HTTP_401_UNAUTHORIZED
             )
         request.data["created_by"] = user.id
         request.data["organization"] = user.organization.id
@@ -48,11 +36,10 @@ class EventCreation(APIView):
             
         else:
                 return Response({"status":"error","Message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-    @Autherize()
+    @Autherize("1")
     def put(self, request, **kwargs):
         event_id = request.GET.get('event_id','')
         user = kwargs['user']
-        role = kwargs['role']
         if event_id is '':
             return Response(
                 {"status":"error",
@@ -72,12 +59,6 @@ class EventCreation(APIView):
                 {"status":"error","Message": "Event with id does not exists"}, 
                 status=status.HTTP_406_NOT_ACCEPTABLE
             )
-        if role != "1":
-            return Response(
-                {"status":"error",
-                    "Message": "User is not club admin"}, 
-                status=status.HTTP_405_METHOD_NOT_ALLOWED
-            )
         if(request.data.get('organization', '') is not '' or request.data.get('created_by', '') is not ''):
                         return Response(
                 {"status":"error",
@@ -94,7 +75,7 @@ class EventCreation(APIView):
 
 
 class SubscriptionCreation(APIView):
-    @Autherize()
+    @Autherize
     def post(self, request, **kwargs):
         user = kwargs['user']
         request.data['user'] = user.id
@@ -109,7 +90,7 @@ class SubscriptionCreation(APIView):
                     return Response({"status":"error","Message": "Your Organisation doesn't have this event"}, status=status.HTTP_404_NOT_FOUND)
         else:
                     return Response({"status":"error","Message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-    @Autherize()
+    @Autherize
     def get(self, request, **kwargs):
                 b = []
                 user = kwargs['user']
@@ -121,26 +102,19 @@ class SubscriptionCreation(APIView):
 
                 return Response(b, status=status.HTTP_200_OK)
 class TagView(APIView):
-    @Autherize()
+
+    @Autherize
     def get(self, request, **kwargs):
-        role = kwargs['role']
         a = []
         for i in Tag.objects.all():
             a.append({"tag": i.tag, "id": i.id})
         
 
-        return Response([a, role], status=status.HTTP_200_OK)
+        return Response([a], status=status.HTTP_200_OK)
     
-    @Autherize()
+    @Autherize("1")
     def post(self, request, **kwargs):
-        user = kwargs['user']
-        role = kwargs['role']        
-        if user.role != "1":
-            return Response(
-                {"status":"error",
-                    "Message": "User is not club admin"}, 
-                status=status.HTTP_401_UNAUTHORIZED
-            )
+        user = kwargs['user']     
         serializer = TagSerializer(data=request.data)
         if serializer.is_valid():
 
@@ -152,7 +126,7 @@ class TagView(APIView):
 
 
 class Filter(APIView):
-    @Autherize()
+    @Autherize
     def get(self, request, **kwargs):
         a =list()
         user = kwargs['user']
@@ -178,7 +152,7 @@ class Filter(APIView):
         return Response(b, status=status.HTTP_200_OK)
 
 class TypeView(APIView):
-    @Autherize()
+    @Autherize
     def get(self, request, **kwargs):
         a = []
         for i in Type.objects.all():
@@ -186,16 +160,9 @@ class TypeView(APIView):
         
 
         return Response(a, status=status.HTTP_200_OK)
-    @Autherize()
+    @Autherize("1")
     def post(self, request, **kwargs):
         user =kwargs['user']
-        role = kwargs['role']
-        if role != "1":
-            return Response(
-                {"status":"error",
-                    "Message": "User is not club admin"}, 
-                status=status.HTTP_401_UNAUTHORIZED
-            )
         serializer = TypeSerializer(data=request.data)
         if serializer.is_valid():
                 serializer.save()
