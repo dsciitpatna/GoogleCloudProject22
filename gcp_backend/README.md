@@ -1,8 +1,7 @@
 # APIs: Definition and Handling
-
 **Importants Points**
 
-- For calling to any API, in path `http://127.0.0.1:8000/` is provided. Later Replace it with the address of Server.
+- For calling to any API, in path `http://127.0.0.1:8000/` or `{{host}}` is provided. Later Replace it with the address of Server.
 - All the data while calling the API are to be provided in Json format. Example will be provided.
 - All organization needs to registered by super admin before user from that organization create accounts.
 - There is authentication implemented at all points, so error codes defined below can occur in usage of any API and there ERROR CODES are unique, so always check for them <br>
@@ -61,7 +60,7 @@ Example: <br>
 ## 2 LOGIN API
 
 Used for Logging in. Can we used by _User_ with any _Role_. <br>
-`http://127.0.0.1:8000/user/login` <br>
+`{{host}}user/login` <br>
 **METHOD:** POST <br>
 **DATA:** <br>
 `{
@@ -124,7 +123,48 @@ Example: <br>
 - **Status:** 400 <br> **Data:** `{"status":"success", "Message":serializer.errors}` <br> **Meaning:** Error from server.
 
 ---
-
+## 4 LOGOUT API
+Used to logout any user account with any user type.
+- **URL_ENDPOINT** -> `{{host}}/user/logout`
+- **METHOD** -> `delete`
+- **DATA** -> None
+- **RESPONSE**
+  - Status 200 -> Loged out successfully.
+---
+## 5 GET ALL CLUB ADMINS
+Used to get a list of all the club admins under an organization.
+- **URL_ENDPOINT** -> `{{host}}/user/club-admin`
+- **METHOD** -> `get`
+- **DATA** -> None
+- **RESPONSE** 
+  - Status 200
+  ```json
+    [
+      {
+        "userid" : ca.userid,  
+        "name" : ca.name,
+        "email" : ca.email,
+        "ph_num" : ca.ph_num,
+        "is_locked" : ca.is_locked
+      }
+    ]
+  ```
+---
+# 6 Create Club Admin
+Used to create a club admin, only super user have access to this.
+- **URL_ENDPOINT** -> `{{host}}/user/club-admin`
+- **METHOD** -> `post`
+- **DATA** ->   
+  ```json
+    {
+      "name": "Rupak2", 
+      "email": "rupakbiswas2305@gmail.com",
+      "password": "123123",
+      "role": "1",
+      "organization": "1"
+    }
+  ```
+- **RESPONSE** 
 ## 4 ORGANIZATION API
 
 Use to get list of Registered _Organizations_ and their _ID_ number. <br>

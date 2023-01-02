@@ -130,20 +130,20 @@ class UserView(APIView):
         return response
 
 #This will not require authorisation because it will be called before sign in
-class OrganisationView(APIView):
-    def __init__(self, **kwargs):
-        self.Organizations = Organization.objects.filter(is_active=True)
-        super().__init__(**kwargs)
+# class OrganisationView(APIView):
+#     def __init__(self, **kwargs):
+#         self.Organizations = Organization.objects.filter(is_active=True)
+#         super().__init__(**kwargs)
     
-    def get(self, request):
-        data = []   
-        for org in self.Organizations:
-            data.append({
-                "id": org.id,
-                "name": org.name,
-            })
+#     def get(self, request):
+#         data = []   
+#         for org in self.Organizations:
+#             data.append({
+#                 "id": org.id,
+#                 "name": org.name,
+#             })
 
-        return Response(data, status=status.HTTP_200_OK)
+#         return Response(data, status=status.HTTP_200_OK)
 
 
 class ClubAdminView(APIView):
@@ -171,8 +171,8 @@ class ClubAdminView(APIView):
         if serializer.is_valid():
             serializer.validated_data['password'] = hash_password(serializer.validated_data['password'])
             serializer.save(role="1", organization = user.organization)
-            return Response( status=status.HTTP_200_OK)
-        return Response({"message" : "User Created"},serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response( {"message" : "User created" }, status=status.HTTP_200_OK)
+        return Response({"message" : "User Created", "error" : serializer.errors }, status=status.HTTP_400_BAD_REQUEST)
 
     @Autherize("0")
     def put(self, request, **kwargs):
