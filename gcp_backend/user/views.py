@@ -21,7 +21,7 @@ class UserCreation(APIView):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             if(request.data['role']=="2" and Organization.objects.get(id=request.data['organization'])):
-                if re.match(pat,request.data['email']) and (True if request.data.get('ph_num', '') == '' else re.match(s, request.data['ph_num'])):
+                if re.match(pat,request.data['email']) and (True if request.data.get('phone_number', '') == '' else re.match(s, request.data['ph_num'])):
                     serializer.validated_data['password'] = hash_password(serializer.validated_data['password'])
                     serializer.save()
                     return Response({"status": "success", "user_id": serializer.data['id']}, status=status.HTTP_200_OK)
