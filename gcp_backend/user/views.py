@@ -238,11 +238,12 @@ class ForgetPassword(APIView):
     def post(self, request): # posting the email address // mail the link
         if not request.data['email']:
             return Response({"message" : "Email is missing"}, status=status.HTTP_400_BAD_REQUEST)
-        
-        mail_client = EmailSending(request.data['email'])
-        res = mail_client.reset_password()
-        return Response({"message" : "Reset Link sent"}, status = status.HTTP_201_CREATED)
-        
+        try:
+            mail_client = EmailSending(request.data['email'])
+            res = mail_client.reset_password()
+            return Response({"message" : "Reset Link sent"}, status = status.HTTP_200_OK)
+        except: 
+            return Response({"message" : "Email not found"}, status = status.HTTP_404_NOT_FOUND)
 
     def put(self, request): # chanfing the password
         token = request.data['token']
