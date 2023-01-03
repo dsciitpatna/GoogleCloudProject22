@@ -1,13 +1,14 @@
 # APIs: Definition and Handling
-
 **Importants Points**
 
-- For calling to any API, in path `http://127.0.0.1:8000/` is provided. Later Replace it with the address of Server.
+- For calling to any API, in path `http://127.0.0.1:8000/` or `{{host}}` is provided. Later Replace it with the address of Server.
 - All the data while calling the API are to be provided in Json format. Example will be provided.
 - All organization needs to registered by super admin before user from that organization create accounts.
 - There is authentication implemented at all points, so error codes defined below can occur in usage of any API and there ERROR CODES are unique, so always check for them <br>
-- - **Status:** 203 <br> **Message:** `{"message": "Cookie not found"}`  <br> **Solution:** Direct user to Login Page. If new user, then sign in.<br>
-- - **Status:** 408 <br> **Message:** `'message' : 'Cookie expired'`  <br> **Solution:** Direct user to Login Page. <br>
+- - **Status:** 203 <br> **Message:** `{"message": "Cookie not found"}`  <br> **Solution:** Direct user to Login Page.<br>
+- - **Status:** 203 <br> **Message:** `'message' : 'Cookie expired'`  <br> **Solution:** Direct user to Login Page. <br>
+- - **Status:** 401 <br> **Data:** `{"status":"error",
+                "Message": "User is not club admin"}` <br> **Meaning:** User is not club admin.
 - - **Status:** 204 <br> **Message:** `{"Message": "User with id does not exists"}`  <br> **Solution:** Direct user to SIGNIN page.<br>
 
 ---
@@ -61,7 +62,7 @@ Example: <br>
 ## 2 LOGIN API
 
 Used for Logging in. Can we used by _User_ with any _Role_. <br>
-`http://127.0.0.1:8000/user/login` <br>
+`{{host}}user/login` <br>
 **METHOD:** POST <br>
 **DATA:** <br>
 `{
@@ -124,8 +125,87 @@ Example: <br>
 - **Status:** 400 <br> **Data:** `{"status":"success", "Message":serializer.errors}` <br> **Meaning:** Error from server.
 
 ---
+## 4 LOGOUT API
+Used to logout any user account with any user type.
+- **URL_ENDPOINT** -> `{{host}}/user/logout`
+- **METHOD** -> `delete`
+- **DATA** -> None
+- **RESPONSE**
+  - Status 200 -> Loged out successfully.
+---
+## 5 GET ALL CLUB ADMINS
+Used to get a list of all the club admins under an organization.
+- **URL_ENDPOINT** -> `{{host}}/user/club-admin`
+- **METHOD** -> `get`
+- **DATA** -> None
+- **RESPONSE** 
+  - Status 200
+  ```json
+    [
+      {
+        "userid" : ca.userid,  
+        "name" : ca.name,
+        "email" : ca.email,
+        "ph_num" : ca.ph_num,
+        "is_locked" : ca.is_locked
+      }
+    ]
+  ```
+---
+## 6 Create Club Admin
+Used to create a club admin, only super user have access to this.
+- **URL_ENDPOINT** -> `{{host}}/user/club-admin`
+- **METHOD** -> `post`
+- **DATA** ->   
+  ```json
+    {
+      "name": "Rupak2", 
+      "email": "rupakbiswas2305@gmail.com",
+      "password": "123123",
+      "role": "1",
+      "organization": "1"
+    }
+  ```
+- **RESPONSE** 
+---
+## 7 Lock Club Admin
+Used to lock a club admin, only super user have access to this.
+- **URL_ENDPOINT** -> `{{host}}/user/club-admin`
+- **METHOD** -> `put`
+- **DATA** ->   
+  ```json
+    {
+      "userid": "1",
+      "is_locked": "true"
+    }
+  ```
+---
+## 8 Forget Password
+Used to send a reset password link to the user.
+- **URL_ENDPOINT** -> `{{host}}/user/forgotpass`
+- **METHOD** -> `post`
+- **DATA** ->   
+  ```json
+    {
+      "email": "someemail@gmail.com"
+    }
+    ```
+- **RESPONSE**
+  - Status 200 -> Email sent successfully.
+  - Status 404 -> Email not found.
 
-## 4 ORGANIZATION API
+## 9 Reset Password
+Used to reset the password of the user.
+- **URL_ENDPOINT** -> `{{host}}/user/forgotpass`
+- **METHOD** -> `put`
+- **DATA** ->   
+  ```json
+    {
+      "password" : "resetpassword"
+    }
+  ```
+---
+## 10 ORGANIZATION API
 
 Use to get list of Registered _Organizations_ and their _ID_ number. <br>
 `http://127.0.0.1:8000/user/org/` <br>
@@ -138,7 +218,7 @@ Use to get list of Registered _Organizations_ and their _ID_ number. <br>
 
 ---
 
-## 5 ADD AN EVENT API
+## 11 ADD AN EVENT API
 
 Use to create a new event. </br>
 Only user with _Role_ as **club_admin** can create an event. </br>
@@ -186,16 +266,12 @@ Here,
 
 - **Status:** 400 <br> **Data:** `{"status":"error",
                 "Message": "Organisation with id does not exists"}` <br> **Meaning:** Organisation with id does not exists.
-- **Status:** 401 <br> **Data:** `{"status":"error",
-                "Message": "User doesn't exist within organisation"}` <br> **Meaning:** User doesn't exist within organisation.
-- **Status:** 401 <br> **Data:** `{"status":"error",
-                "Message": "User is not club admin"}` <br> **Meaning:** User is not club admin.
 - **Status:** 201 <br> **Data:** `{"status":"success","Message":"Event Added Successfully"}` <br> **Meaning:** Event Added Successfully.
 - **Status:** 400 <br> **Data:** `{"status":"error","Message": serializer.errors}` <br> **Meaning:** Any other Error Generated by Backend..
 
 ---
 
-## 6 EDIT AN EVENT API
+## 12 EDIT AN EVENT API
 
 Use to edit an event. <br>
 Only user with _Role_ as **club_admin** can edit an event. </br>
@@ -233,8 +309,6 @@ Here,
                 "Message": "Organisation with id does not exists"}` <br> **Meaning:** Organisation with id does not exists.
 - **Status:** 401 <br> **Data:** `{"status":"error",
                 "Message": "User doesn't exist within organisation"}` <br> **Meaning:** User doesn't exist within organisation.
-- **Status:** 405 <br> **Data:** `{"status":"error",
-                "Message": "User is not club admin"}` <br> **Meaning:** User is not club admin.
 - **Status:** 406 <br> **Data:** `{"status":"error",
                 "Message": "Event with id does not exists"}` <br> **Meaning:** Event with id does not existsn.
 - **Status:** 403 <br> **Data:** `        return Response(
@@ -245,7 +319,7 @@ Here,
 
 ---
 
-## 7 ADD A SUBSCRIPTION API
+## 13 ADD A SUBSCRIPTION API
 
 Use to add an subscription for a user. Any user with any role can add a subscription. </br>
 `http://127.0.0.1:8000/events/subs` </br>
@@ -271,7 +345,7 @@ Here, <br>
 
 ---
 
-## 8 VIEW SUBSCRIPTION API
+## 14 VIEW SUBSCRIPTION API
 
 Use to view all the subscription of a user. <br>
 `http://127.0.0.1:8000/events/subs`
@@ -301,7 +375,7 @@ Use to view all the subscription of a user. <br>
 
 ---
 
-## 9 FILTER TAG API
+## 15 FILTER TAG API
 
 Use to get all the tags.
 `http://127.0.0.1:8000/events/tags`
@@ -325,7 +399,7 @@ Use to get all the tags.
 
 ---
 
-## 10 ALL EVENTS API
+## 16 ALL EVENTS API
 
 Use to view all events of a Organisation. <br>
 `http://127.0.0.1:8000/events/` <br>
@@ -365,7 +439,7 @@ Use to view all events of a Organisation. <br>
 
 ---
 
-## 11 EVENTS FILTER API
+## 17 EVENTS FILTER API
 
 Use to filter events. **This is a Dynamic filter 😊 search** <br>
 `http://127.0.0.1:8000/events?` <br>
@@ -413,7 +487,7 @@ Example: <br>
 
 ---
 
-## 12 ADD TAG API
+## 18 ADD TAG API
 
 Use to add an Tag. <br>
 `http://127.0.0.1:8000/events/tags` <br>
@@ -425,13 +499,12 @@ Use to add an Tag. <br>
 **Return Types:** <br>
 
 - **Status:** 403 <br> **Data:** `{"status":"error", "Message":User doesn't exist}` <br> **Meaning:** User doesn't exist.
-- **Status:** 401 <br> **Data:** `{"status":"error", "Message":User is not club admin}` <br> **Meaning:** User is not club admin.
 - **Status:** 201 <br> **Data:** `{"status":"success","Message":"Tag Added Successfully."}` <br> **Meaning:** Success.
 - **Status:** 400 <br> **Data:** `{"status":"error", "Message":serializer.errors}` <br> **Meaning:** Error from server.
 
 ---
 
-## 13 ADD AN TYPE OF EVENT API
+## 19 ADD AN TYPE OF EVENT API
 
 Use to add an type of Event. <br>
 `http://127.0.0.1:8000/events/type` <br>
@@ -443,13 +516,12 @@ Use to add an type of Event. <br>
 **Return Types:** <br>
 
 - **Status:** 403 <br> **Data:** `{"status":"error", "Message":User doesn't exist}` <br> **Meaning:** User doesn't exist.
-- **Status:** 401 <br> **Data:** `{"status":"error", "Message":User is not club admin}` <br> **Meaning:** User is not club admin.
 - **Status:** 201 <br> **Data:** `{"status":"success","Message":"Type Added Successfully."}` <br> **Meaning:** Success.
 - **Status:** 400 <br> **Data:** `{"status":"error", "Message":serializer.errors}` <br> **Meaning:** Error from server.
 
 ---
 
-## 14 FILTER TYPE API
+## 20 FILTER TYPE API
 
 Use to get all the type of events. <br>
 `http://127.0.0.1:8000/events/type` <br>
@@ -469,7 +541,7 @@ Use to get all the type of events. <br>
 
 ---
 
-## 15 GET USER INFO
+## 21 GET USER INFO
 
 To get user's details. <br>
 `http://127.0.0.1:8000/user/profile` <br>
@@ -492,7 +564,7 @@ To get user's details. <br>
 
 ---
 
-## 16 LOGOUT API
+## 22 LOGOUT API
 
 To log a user out. <br>
 `http://127.0.0.1:8000/user/logout` <br>

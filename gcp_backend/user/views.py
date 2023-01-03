@@ -21,7 +21,7 @@ class UserCreation(APIView):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():                
             if(request.data['role']=="2" and Organization.objects.get(id=request.data['organization'])):
-                if re.match(pat,request.data['email']) and (True if request.data.get('ph_num', '') == '' else re.match(s, request.data['ph_num'])):
+                if re.match(pat,request.data['email']) and (True if request.data.get('phone_number', '') == '' else re.match(s, request.data['ph_num'])):
                     serializer.validated_data['password'] = hash_password(serializer.validated_data['password'])
                     serializer.save()
                     return Response({"status": "success", "user_id": serializer.data['id']}, status=status.HTTP_200_OK)
@@ -130,20 +130,20 @@ class UserView(APIView):
         return response
 
 #This will not require authorisation because it will be called before sign in
-class OrganisationView(APIView):
-    def __init__(self, **kwargs):
-        self.Organizations = Organization.objects.filter(is_active=True)
-        super().__init__(**kwargs)
+# class OrganisationView(APIView):
+#     def __init__(self, **kwargs):
+#         self.Organizations = Organization.objects.filter(is_active=True)
+#         super().__init__(**kwargs)
     
-    def get(self, request):
-        data = []   
-        for org in self.Organizations:
-            data.append({
-                "id": org.id,
-                "name": org.name,
-            })
+#     def get(self, request):
+#         data = []   
+#         for org in self.Organizations:
+#             data.append({
+#                 "id": org.id,
+#                 "name": org.name,
+#             })
 
-        return Response(data, status=status.HTTP_200_OK)
+#         return Response(data, status=status.HTTP_200_OK)
 
 
 class ClubAdminView(APIView):
@@ -171,8 +171,8 @@ class ClubAdminView(APIView):
         if serializer.is_valid():
             serializer.validated_data['password'] = hash_password(serializer.validated_data['password'])
             serializer.save(role="1", organization = user.organization)
-            return Response( status=status.HTTP_200_OK)
-        return Response({"message" : "User Created"},serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response( {"message" : "User created" }, status=status.HTTP_200_OK)
+        return Response({"message" : "User Created", "error" : serializer.errors }, status=status.HTTP_400_BAD_REQUEST)
 
     @Autherize("0")
     def put(self, request, **kwargs):
@@ -238,11 +238,12 @@ class ForgetPassword(APIView):
     def post(self, request): # posting the email address // mail the link
         if not request.data['email']:
             return Response({"message" : "Email is missing"}, status=status.HTTP_400_BAD_REQUEST)
-        
-        mail_client = EmailSending(request.data['email'])
-        res = mail_client.reset_password()
-        return Response({"message" : "Reset Link sent"}, status = status.HTTP_201_CREATED)
-        
+        try:
+            mail_client = EmailSending(request.data['email'])
+            res = mail_client.reset_password()
+            return Response({"message" : "Reset Link sent"}, status = status.HTTP_200_OK)
+        except: 
+            return Response({"message" : "Email not found"}, status = status.HTTP_404_NOT_FOUND)
 
     def put(self, request): # chanfing the password
         token = request.data['token']
