@@ -19,7 +19,7 @@ s = r'(0|91)?[6-9][0-9]{9}'
 class UserCreation(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
+        if serializer.is_valid():                
             if(request.data['role']=="2" and Organization.objects.get(id=request.data['organization'])):
                 if re.match(pat,request.data['email']) and (True if request.data.get('ph_num', '') == '' else re.match(s, request.data['ph_num'])):
                     serializer.validated_data['password'] = hash_password(serializer.validated_data['password'])
