@@ -7,7 +7,9 @@
     "@emotion/styled": "^11.10.5",
     "@fullcalendar/core": "^6.0.2",
     "@fullcalendar/daygrid": "^6.0.2",
+    "@fullcalendar/interaction": "^6.0.2",
     "@fullcalendar/react": "^6.0.2",
+    "@fullcalendar/timegrid": "^6.0.2",
     "@mui/icons-material": "^5.11.0",
     "@mui/lab": "^5.0.0-alpha.113",
     "@mui/material": "^5.11.0",
@@ -22,12 +24,7 @@
     "react-big-calendar": "^1.5.2",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4",
-    "@fullcalendar/core": "^6.0.2",
-    "@fullcalendar/daygrid": "^6.0.2",
-    "@fullcalendar/interaction": "^6.0.2",
-    "@fullcalendar/react": "^6.0.2",
-    "@fullcalendar/timegrid": "^6.0.2"
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
