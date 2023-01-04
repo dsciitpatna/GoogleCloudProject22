@@ -29,3 +29,5 @@ class UserAdmin(admin.ModelAdmin):
     )
     empty_value_display = '-empty-'
     search_fields = ['name', 'userid', 'email', 'phone_number', 'organization_id']
+
+    

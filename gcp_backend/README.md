@@ -26,7 +26,7 @@ Api used for signing in. </br>
   "name": "<name>",
   "email": "<Valid email>",
   "password": "<password length should be less than 14>",
-  "role": 2,
+  "role": "2",
   "organization": <organization id>
 }
 ```
@@ -42,7 +42,7 @@ Example: <br>
   "name": "J",
   "email": "A@a.com",
   "password": "a2162a545a",
-  "role": 2,
+  "role": "2",
   "organization": 1
 }
 ```
@@ -553,7 +553,7 @@ To get user's details. <br>
   ```json
   {
     "user_id": 1,
-    "role": 2,
+    "role": "2",
     "name": "ABC",
     "email": "A@abc.com",
     "ph_num": "9999999999",
