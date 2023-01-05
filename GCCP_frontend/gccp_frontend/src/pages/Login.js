@@ -14,15 +14,27 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const theme = createTheme();
+const HOST = process.env.REACT_APP_HOST;
 
 export default function LogIn() {
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
+    const body = {
+      email: data.get("email"),
+      password: data.get("password"),
+    };
+    let response = await fetch(`${HOST}/user/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify(body),
     });
+
+    let result = await response.json();
+    console.log(result);
   };
 
   return (
