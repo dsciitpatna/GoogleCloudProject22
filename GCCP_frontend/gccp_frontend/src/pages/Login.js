@@ -39,6 +39,13 @@ export default function LogIn() {
     console.log(result);
   };
 
+  const handleGOauth = (event) => {
+    // bind a link for google oauth
+    event.preventDefault();
+    const location = "http://127.0.0.1:8000/accounts/google/login/";
+    window.location = location;
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
@@ -83,7 +90,7 @@ export default function LogIn() {
               <Button variant="outlined" color='secondary'><GitHubIcon/> &ensp; GitHub</Button>
               </Grid>
               <Grid xs={6}>
-              <Button variant="outlined" color='secondary'><GoogleIcon/> &ensp; Google</Button>
+              <Button variant="outlined" color='secondary' onClick={handleGOauth}><GoogleIcon/> &ensp; Google</Button>
               </Grid>
             </Grid>
 

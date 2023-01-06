@@ -97,7 +97,7 @@ class UserView(APIView):
         serializer = UserSerializer(instance=User_instance, data = request.data, partial=True)
         
         if serializer.is_valid():
-            if(request.data.get('password', '') is not ''):
+            if(request.data.get('password', '') != ''):
                 serializer.validated_data['password'] = hash_password(serializer.validated_data['password'])
             serializer.save()
             return Response( status=status.HTTP_200_OK)

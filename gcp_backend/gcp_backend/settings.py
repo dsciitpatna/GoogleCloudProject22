@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'jet',
     'user',
     'events',
+    'corsheaders',
     'django.contrib.sites',
     'allauth',
     'allauth.account',
@@ -204,3 +205,4 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
 SOCIALACCOUNT_ADAPTER ='user.adapter.UserAccountAdapter'
+CORS_ALLOW_ALL_ORIGINS = True
