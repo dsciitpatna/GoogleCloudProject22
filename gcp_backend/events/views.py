@@ -11,8 +11,8 @@ from user.utility import Autherize
 import jwt
 from gcp_backend.settings import COOKIE_ENCRYPTION_SECRET
 #  Create your views here.
-regex = r"\d{4}-\d{1,2}-\d{1,2}"
-format = "%Y-%m-%d"
+regex = r"\d{1,2}\/\d{1,2}\/\d{4}"
+format = "%d-%m-%Y"
 
 def to_python(value: str) -> date:
     return datetime.strptime(value, format).date()
@@ -30,7 +30,9 @@ class EventCreation(APIView):
             )
         request.data["created_by"] = user.id
         request.data["organization"] = user.organization.id
+        print(serializer)
         if serializer.is_valid():
+
                 serializer.save()
                 return Response({"status":"success","Message":"Event Added Successfully"}, status=status.HTTP_201_CREATED)
             

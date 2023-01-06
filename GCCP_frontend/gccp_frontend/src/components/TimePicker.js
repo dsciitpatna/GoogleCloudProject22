@@ -15,12 +15,14 @@ export default function ResponsiveTimePickers(props) {
         <MobileTimePicker
           label={props.label}
           value={value}
+          ampm={false}
           onChange={(newValue) => {
             setValue(newValue);
           }}
-          renderInput={(params) => <TextField {...params} />}
+          renderInput={(params) => <TextField {...params} id={props.id} name={props.id}/>}
         />
         
+
       </Stack>
     </LocalizationProvider>
   );
