@@ -11,7 +11,7 @@ class UserAdmin(admin.ModelAdmin):
         self.message_user(request, "Selected User Locked")
 
 
-    list_display = ( 'userid','name', 'email', 'organization_id')
+    list_display = ( 'userid','name', 'email','role', 'organization_id')
     actions = [lock_user]
     list_filter = ('role', 'is_locked')
     fieldsets = (

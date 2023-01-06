@@ -59,7 +59,7 @@ class EventCreation(APIView):
                 {"status":"error","Message": "Event with id does not exists"}, 
                 status=status.HTTP_406_NOT_ACCEPTABLE
             )
-        if(request.data.get('organization', '') is not '' or request.data.get('created_by', '') is not ''):
+        if(request.data.get('organization', '') != '' or request.data.get('created_by', '') != ''):
                         return Response(
                 {"status":"error",
                     "Message": "Cannot edit Organisation name or created by"}, 
@@ -132,16 +132,16 @@ class Filter(APIView):
         user = kwargs['user']
         q ={'organization': user.organization.id}
         sdate = request.GET.get('str_date','')
-        if(sdate is not ''):
+        if(sdate != ''):
             q.update({'start_date__gte':to_python(sdate)})
         edate = request.GET.get('end_date','')
-        if(edate is not ''):
+        if(edate != ''):
             q.update({'end_date__lte':to_python(edate)})
         tag = request.GET.get('tag','')
-        if(tag is not ''):
+        if(tag != ''):
             q.update({'tags': tag})
         _type = request.GET.get('type','')
-        if (_type is not ''):
+        if (_type != ''):
             q.update({'_type':_type})
         b= []
         for i in  Event.objects.all().filter(**q):
