@@ -113,11 +113,14 @@ class UserView(APIView):
             "role": user.role,
             "name": user.name,
             "email": user.email,
-            "ph_num": user.ph_num,
+            "ph_num": user.phone_number,
             "organization": user.organization.name,
             "is_active": user.is_active,
         }
-        return Response(data, status=status.HTTP_200_OK)
+        print("done")
+        response =  Response(data, status=status.HTTP_200_OK)
+        response.set_cookie('Access-Control-Allow-Credentials', 'true')
+        return response
     # Logout API
     @Autherize()
     def delete(self, request, **kwargs):
