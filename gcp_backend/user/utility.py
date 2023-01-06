@@ -31,7 +31,10 @@ class Autherize:
                     return response 
                 return Response({"message": "Cookie not found"}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
 
-                
+            try:
+                payload = jwt.decode(cookie, COOKIE_ENCRYPTION_SECRET, algorithms=['HS256'])
+            except jwt.ExpiredSignatureError:
+                return Response( { 'message' : 'Cookie expired' }, status=status.HTTP_400_BAD_REQUEST)
             user = User.objects.get(userid=payload['id'])
             if not user:
                 return Response(

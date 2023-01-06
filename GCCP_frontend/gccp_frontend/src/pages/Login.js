@@ -12,11 +12,13 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 
 const theme = createTheme();
 const HOST = process.env.REACT_APP_HOST;
 
 export default function LogIn() {
+  const navigate = useNavigate();
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -32,7 +34,7 @@ export default function LogIn() {
 
       body: JSON.stringify(body),
     });
-
+    
     let result = await response.json();
     console.log(result);
   };
