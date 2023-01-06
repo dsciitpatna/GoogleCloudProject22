@@ -1,6 +1,8 @@
 let eventGuid = 0;
 let todayStr = new Date().toISOString().replace(/T.*$/, ""); // YYYY-MM-DD of today
 
+// fetch data and populate INITIAL_EVENTS
+
 export const INITIAL_EVENTS = [
   {
     id: createEventId(),
