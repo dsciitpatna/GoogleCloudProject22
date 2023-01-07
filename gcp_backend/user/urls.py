@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import UserCreation, UserView, ClubAdminView, EmailVarification, ForgetPassword, OauthHelper
+from .views import UserCreation, UserView, ClubAdminView, EmailVarification, ForgetPassword, OauthHelper, UserGetView
 
 urlpatterns = [
     #  {{host}}/user/signup
@@ -13,4 +13,5 @@ urlpatterns = [
     path('verifymail', EmailVarification.as_view(), name='verify'),
     path('forgotpass', ForgetPassword.as_view()),
     path('orgtoken/<str:org_id>', OauthHelper.as_view()),
+    path('get-user', UserGetView.as_view()),
 ]

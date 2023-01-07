@@ -20,6 +20,13 @@ from django.conf import settings
 from django.urls import path, include
 from user.urls import urlpatterns
 from events.urls import urlpatterns
+from django.shortcuts import redirect
+
+
+def huh(_):
+    return redirect("http://127.0.0.1:3000")
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('events/', include('events.urls')),
@@ -27,4 +34,5 @@ urlpatterns = [
     path('jet/', include('jet.urls', 'jet')),
     path('jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),
     path('accounts/', include('allauth.urls')),
+    path('', huh)
 ]

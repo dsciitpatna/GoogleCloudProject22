@@ -6,8 +6,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.core.mail import send_mail
 import datetime
-import sys
 from gcp_backend.settings import EMAIL_HOST_USER
+from django.contrib.sessions.models import Session
+from django.contrib.auth.models import User as USER
 # Autherize decorator class
 
 
@@ -20,9 +21,6 @@ class Autherize:
             if args[1].COOKIES.get('jwt') is None:
                 # handling O-auth login
                 if args[1].user.is_authenticated:
-                    print(f'ERROR Hello', file=sys.stderr)
-                    print(f'||{args[1].user}||', file=sys.stderr)
-                    
                     uid = User.objects.get(email=args[1].user.email).userid
                     payload = {
                         "id": uid,
@@ -35,7 +33,7 @@ class Autherize:
                         {"message": "Cookie set"}, status=status.HTTP_200_OK)
                     response.set_cookie('jwt', token)
                     return response
-                return Response({"message": "Cookie not found"}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+                return Response({"message": "Cookie not found"}, status=status.HTTP_400_BAD_REQUEST)
             else:
                 cookie = args[1].COOKIES['jwt']
 
@@ -45,9 +43,6 @@ class Autherize:
                     cookie, COOKIE_ENCRYPTION_SECRET, algorithms=['HS256'])
             except:
                 if args[1].user.is_authenticated:
-                    print(f'ERROR Hello', file=sys.stderr)
-                    print(f'||{args[1].user}||', file=sys.stderr)
-                    
                     uid = User.objects.get(email=args[1].user.email).userid
                     payload = {
                         "id": uid,
@@ -60,13 +55,13 @@ class Autherize:
                         {"message": "Cookie set"}, status=status.HTTP_200_OK)
                     response.set_cookie('jwt', token)
                     return response
-                return Response({"message": "Cookie not found"}, status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
-            
+                return Response({"message": "Cookie not found"}, status=status.HTTP_401_UNAUTHORIZED)
+
             user = User.objects.get(userid=payload['id'])
             if not user:
                 return Response(
                     {"Message": "User with id does not exists"},
-                    status=status.HTTP_204_NO_CONTENT
+                    status=status.HTTP_400_BAD_REQUEST
                 )
             if self.type == "0" and user.role != "0":
                 return Response(
@@ -140,3 +135,14 @@ class EmailSending:
         self.body = f"Hi {name}, Your password has been changed, if not initiated by you please take action.\n\n Thank you"
         res = send_mail(self.subject, self.body, EMAIL_HOST_USER, self.address)
         return res
+
+
+def isauthenticated(request):
+    if request.COOKIES.get('sessionid'):
+        session = Session.objects.get(
+            session_key=request.COOKIES.get('sessionid'))
+        session_data = session.get_decoded()
+        uid = session_data.get('_auth_user_id')
+        user = USER.objects.get(id=uid)
+        return user
+    return Response({"message": "Unauthenticaed"}, status=status.HTTP_401_UNAUTHORIZED)
