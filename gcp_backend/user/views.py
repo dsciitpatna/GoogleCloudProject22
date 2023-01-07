@@ -1,5 +1,8 @@
 from multiprocessing import AuthenticationError
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
+
 from .serializer import UserSerializer
 from .models import User, Organization
 from rest_framework.views import APIView
@@ -119,11 +122,11 @@ class UserView(APIView):
         }
         print("done")
         response =  Response(data, status=status.HTTP_200_OK)
-        response.set_cookie('Access-Control-Allow-Credentials', 'true')
         return response
     # Logout API
     @Autherize()
-    def delete(self, request, **kwargs):
+    # @authentication_classes([SessionCsrfExemptAuthentication])
+    def delete(self, _, **kwargs):
         user = kwargs['user']
         user.is_active = False
         user.save()

@@ -1,7 +1,18 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
-
+import { Link, useNavigate } from 'react-router-dom'
+import axios from "axios"
 const SideBar = () => {
+    const navigate = useNavigate()
+    const handleLogOut = async (e) => {
+        e.preventDefault();
+        const url = `${process.env.REACT_APP_HOST}/user/logout`
+        try {
+            await axios.delete(url, { withCredentials: true });
+            navigate('/');
+        } catch (e) {
+            console.error(e);
+        }
+    }
     return (
         <aside className="main-sidebar">
             {/* sidebar: style can be found in sidebar.less */}
@@ -39,6 +50,11 @@ const SideBar = () => {
                     <li className>
                         <a href="#" style={{ color: 'black', fontSize: 20 }}>
                             <i className="fa fa-user-plus" /><span> Invite people</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" style={{ color: 'black', fontSize: 16 }} onClick={handleLogOut}>
+                            <i className="fa fa-sign-out" /> <span> Logout</span>
                         </a>
                     </li>
                 </ul>
