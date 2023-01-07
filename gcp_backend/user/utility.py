@@ -99,7 +99,7 @@ class EmailSending:
 
         token = jwt.encode(
             payload, COOKIE_ENCRYPTION_SECRET, algorithm='HS256')
-        link = "http://localhost:8000/user/verify/"+token
+        link = "http://127.0.0.1:8000/user/verify/"+token
 
         self.subject = "No replay"
         self.body = f'''

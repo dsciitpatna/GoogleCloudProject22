@@ -12,6 +12,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { handleGOauth } from "../components/util.js"
 
 const theme = createTheme();
 const HOST = process.env.REACT_APP_HOST;
@@ -129,7 +130,7 @@ export default function SignUp() {
                 </Button>
               </Grid>
               <Grid xs={8} sx={{ m: 1 }}>
-                <Button variant="outlined" color="secondary">
+                <Button variant="outlined" color="secondary" onClick={handleGOauth}>
                   <GoogleIcon /> &ensp; Google
                 </Button>
               </Grid>
