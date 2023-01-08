@@ -34,15 +34,19 @@ export default function LogIn() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-
                 body: JSON.stringify(body),
                 credentials: "include",
             });
 
             let result = await response.json();
-            setLoggedIn(true);
-            setUser(result);
-            navigate("/calendar");
+            if (data.role) {
+                setLoggedIn(true);
+                setUser(result);
+                navigate("/calendar");
+            } else {
+                setLoggedIn(false);
+                setUser(null);
+            }
         } catch (e) {
             console.error(e);
             setLoggedIn(false);
