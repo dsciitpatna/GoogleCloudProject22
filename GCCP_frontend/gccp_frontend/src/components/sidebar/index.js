@@ -37,9 +37,9 @@ const SideBar = () => {
                         </Link>
                     </li>
                     <li className>
-                        <Link to="/">
+                        <Link to="/profile">
                             <i className="fa fa-bell" />
-                            <span>Reminders</span>
+                            <span>Profile</span>
                         </Link>
                     </li>
                     <li className="header">Favourites</li>

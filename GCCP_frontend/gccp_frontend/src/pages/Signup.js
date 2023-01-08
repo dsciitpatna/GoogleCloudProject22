@@ -13,11 +13,13 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { handleGOauth } from "../components/util.js"
+import { useNavigate } from "react-router-dom";
 
 const theme = createTheme();
 const HOST = process.env.REACT_APP_HOST;
 
 export default function SignUp() {
+  const navigate = useNavigate();
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -28,19 +30,23 @@ export default function SignUp() {
       email: data.get("email"),
       password: data.get("password"),
       role: "2",
-      organization: 1,
+      organization: data.get("organization"),
     };
+    try{
+      let response = await fetch(`${HOST}/user/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      })
 
-    let response = await fetch(`${HOST}/user/signup`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    })
-
-    let result = await response.json();
-    console.log(result);
+      let result = await response.json();
+      console.log(result);
+      navigate("/login"); 
+    } catch (e) {
+    console.error(e);
+    }
   };
 
   return (
@@ -103,7 +109,7 @@ export default function SignUp() {
                   autoComplete="email"
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   required
                   fullWidth
@@ -112,6 +118,17 @@ export default function SignUp() {
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  fullWidth
+                  name="organization"
+                  label="Organization ID"
+                  type="text"
+                  id="organization"
+                  autoComplete="organization"
                 />
               </Grid>
             </Grid>
@@ -124,11 +141,11 @@ export default function SignUp() {
                 alignItems: "center",
               }}
             >
-              <Grid xs={8} sx={{ m: 1 }}>
+              {/* <Grid xs={8} sx={{ m: 1 }}>
                 <Button variant="outlined" color="secondary">
                   <GitHubIcon /> &ensp; GitHub
                 </Button>
-              </Grid>
+              </Grid> */}
               <Grid xs={8} sx={{ m: 1 }}>
                 <Button variant="outlined" color="secondary" onClick={handleGOauth}>
                   <GoogleIcon /> &ensp; Google

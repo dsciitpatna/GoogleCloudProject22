@@ -104,11 +104,11 @@ export default function LogIn() {
                         />
                         <h6>OR</h6>
                         <Grid container>
-                            <Grid xs={6}>
+                            {/* <Grid xs={6}>
                                 <Button variant="outlined" color="secondary">
                                     <GitHubIcon /> &ensp; GitHub
                                 </Button>
-                            </Grid>
+                            </Grid> */}
                             <Grid xs={6}>
                                 <Button
                                     variant="outlined"

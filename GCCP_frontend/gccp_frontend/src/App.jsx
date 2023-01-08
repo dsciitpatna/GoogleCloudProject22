@@ -12,6 +12,8 @@ import Calendar from "./pages/Calendar";
 import Technical from "./components/technical/index";
 import SignupForm from "./pages/Signup";
 import Profile from "./pages/Profile";
+import ClubAdminRoute from "./Routes/ClubAdminRoute";
+import AdminRoute from "./Routes/AdminRoute";
 
 function App() {
     // <div className="App">
@@ -33,15 +35,19 @@ function App() {
                             element={<Navigate to="/calendar" replace />}
                         />
                         <Route path="/calendar" element={<Calendar />} />
-                        <Route path="/CreateEvent" element={<CreateEvent />} />
-                        <Route path="/members" element={<Members />} />
-                        <Route path="/AddMember" element={<AddMember />} />
                         <Route
                             exact
                             path="/technical"
                             element={<Technical />}
                         />
                         <Route path="/Profile" element={<Profile />} />
+                        <Route path='/CreateEvent' element={<ClubAdminRoute />} >
+                            <Route path="/CreateEvent" element={<CreateEvent />} />
+                        </Route>
+                        <Route path='/' element={<AdminRoute />} >
+                            <Route path="/members" element={<Members />} />
+                            <Route path="/AddMember" element={<AddMember />} />
+                        </Route>
                     </Route>
                     <Route
                         path="*"

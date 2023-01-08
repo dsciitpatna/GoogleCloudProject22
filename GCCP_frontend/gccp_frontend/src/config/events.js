@@ -3,6 +3,8 @@ let todayStr = new Date().toISOString().replace(/T.*$/, ""); // YYYY-MM-DD of to
 
 // fetch data and populate INITIAL_EVENTS
 
+
+
 export const INITIAL_EVENTS = [
   {
     id: createEventId(),
