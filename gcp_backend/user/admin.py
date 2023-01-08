@@ -24,7 +24,7 @@ class UserAdmin(admin.ModelAdmin):
                 )
         }),
         ('Internal Flags', {
-            'fields': (('is_active', 'is_locked'), 'password')
+            'fields': (('is_active', 'is_locked'), 'password', 'organization')
         })
     )
     empty_value_display = '-empty-'
